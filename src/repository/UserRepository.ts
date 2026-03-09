@@ -2,12 +2,16 @@ import type { User, CreateUserDto, UpdateUserDto } from '../models/User';
 import { v4 as uuid } from 'uuid';
 
 export default class UserRepository {
-    private KEY = 'users';
+    private USERS_KEY = 'users';
+    private CONNEXION_KEY = 'connexion';
     private users: User[];
+    private connexion: User[] | null;
 
     constructor() {
-        const data = localStorage.getItem(this.KEY);
-        this.users = data ? JSON.parse(data) : [];
+        const usersData = localStorage.getItem(this.USERS_KEY);
+        this.users = usersData ? JSON.parse(usersData) : [];
+        const connexionData = sessionStorage.getItem(this.CONNEXION_KEY);
+        this.connexion = connexionData ? JSON.parse(connexionData) : null;
     }
 
     getUsers(): User[] {
@@ -16,6 +20,11 @@ export default class UserRepository {
 
     getUser(id: string): User | null {
         const user = this.users.find((user: User) => user.id === id);
+        return user ? user : null;
+    }
+
+    getUserByEmail(email: string): User | null {
+        const user = this.users.find((user: User) => user.email === email);
         return user ? user : null;
     }
 
@@ -44,6 +53,6 @@ export default class UserRepository {
     }
 
     synchronize(): void {
-        localStorage.setItem(this.KEY, JSON.stringify(this.users));
+        localStorage.setItem(this.USERS_KEY, JSON.stringify(this.users));
     }
 }

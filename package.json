@@ -30,6 +30,7 @@
         "vite": "^8.0.0-beta.13"
     },
     "dependencies": {
-        "bcrypt": "^6.0.0"
+        "bcrypt": "^6.0.0",
+        "svelte-spa-router": "^4.0.1"
     }
 }
