@@ -7,7 +7,7 @@
     let password = $state('');
     let errorMessage = $state('');
 
-    async function onSubmit(e: SubmitEvent): Promise<void> {
+    async function onsubmit(e: SubmitEvent): Promise<void> {
         e.preventDefault();
         const authController = new AuthController();
         const response = await authController.login({ email: email, password: password });
@@ -15,9 +15,9 @@
             errorMessage = response.message ? response.message : 'Erreur interne';
         } else {
             if (response.data?.admin === true) {
-                push('/dashboard');
+                push('#/dashboard');
             } else {
-                push('/salle');
+                push('#/salle');
             }
         }
     }
@@ -25,7 +25,7 @@
 
 <h1>Connexion</h1>
 <p class="errorMessage">{errorMessage}</p>
-<form onsubmit={(e) => onSubmit(e)}>
+<form {onsubmit}>
     <label for="email">email</label>
     <input type="email" name="email" id="email" bind:value={email} />
 
