@@ -1,6 +1,7 @@
 <script lang="ts">
     import AuthController from '../controllers/auth.controller';
     import { Status } from '../models/response.entity';
+    import { push } from 'svelte-spa-router';
 
     let email = $state('');
     let password = $state('');
@@ -11,6 +12,12 @@
         const response = await authController.login({ email: email, password: password });
         if (response.status !== Status.OK) {
             errorMessage = response.message ? response.message : 'Erreur interne';
+        } else {
+            if (response.data?.admin === true) {
+                push('/dashboard');
+            } else {
+                push('/salles');
+            }
         }
     }
 </script>
