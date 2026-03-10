@@ -32,18 +32,12 @@ export default class UserRepository {
 
     removeUser(id: string): void {
         const index = this.users.findIndex((user: User) => user.id === id);
-        if (index === -1) {
-            throw new Error();
-        }
         this.users.splice(index, 1);
         this.synchronize();
     }
 
     updateUser(id: string, updateUserDto: UpdateUserDto): void {
         const index = this.users.findIndex((user: User) => user.id === id);
-        if (index === -1) {
-            throw new Error();
-        }
         this.users.splice(index, 1, { ...updateUserDto, id: id });
         this.synchronize();
     }
