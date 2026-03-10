@@ -1,5 +1,5 @@
 import { Status, type Response } from '../models/response.entity';
-import type { LoginDto, CreateUserDto } from '../models/user.entity';
+import type { LoginDto, CreateUserDto, User } from '../models/user.entity';
 import AuthRepository from '../repository/auth.repository';
 import UserRepository from '../repository/user.repository';
 import * as bcrypt from 'bcrypt';
@@ -15,7 +15,7 @@ export default class AuthController {
         this.userRepository = new UserRepository();
     }
 
-    public async login(loginDto: LoginDto): Promise<Response> {
+    public async login(loginDto: LoginDto): Promise<Response<User>> {
         const user = this.userRepository.getUserByEmail(loginDto.email);
         if (!user) {
             return {

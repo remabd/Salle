@@ -1,6 +1,6 @@
-export interface Response {
+export interface Response<T = null> {
     status: Status;
-    data: unknown;
+    data: T | null;
     message: string | null;
 }
 
@@ -8,4 +8,5 @@ export enum Status {
     OK,
     UNAUTHORIZED,
     NOT_FOUND,
+    INTERNAL,
 }
