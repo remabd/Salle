@@ -1,5 +1,6 @@
 <script lang="ts">
     import AuthController from '../controllers/auth.controller';
+    import { Status } from '../models/response.entity';
 
     let email = $state('');
     let password = $state('');
@@ -8,8 +9,8 @@
     async function onSubmit(): Promise<void> {
         const authController = new AuthController();
         const response = await authController.login({ email: email, password: password });
-        if (response.error) {
-            errorMessage = response.error;
+        if (response.status !== Status.OK) {
+            errorMessage = response.message ? response.message : 'Erreur interne';
         }
     }
 </script>

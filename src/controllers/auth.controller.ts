@@ -1,4 +1,4 @@
-import type { Response } from '../models/response.entity';
+import { Status, type Response } from '../models/response.entity';
 import type { LoginDto, CreateUserDto } from '../models/user.entity';
 import AuthRepository from '../repository/auth.repository';
 import UserRepository from '../repository/user.repository';
@@ -19,16 +19,18 @@ export default class AuthController {
         const user = this.userRepository.getUserByEmail(loginDto.email);
         if (!user) {
             return {
+                status: Status.UNAUTHORIZED,
                 message: null,
-                error: 'Informations incorrectes',
+                data: null,
             };
         }
 
         const valid = await bcrypt.compare(loginDto.password, user.password);
         if (!valid) {
             return {
+                status: Status.UNAUTHORIZED,
                 message: null,
-                error: 'Informations incorrectes',
+                data: null,
             };
         }
 
@@ -39,8 +41,9 @@ export default class AuthController {
         };
         this.authRepository.addConnexion(connexion);
         return {
+            status: Status.OK,
             message: 'Utilisateur connecté',
-            error: null,
+            data: user,
         };
     }
 
@@ -52,16 +55,18 @@ export default class AuthController {
         const exist = this.userRepository.getUserByEmail(createUserDto.email);
         if (exist) {
             return {
-                message: null,
-                error: 'Email déja utilisé',
+                status: Status.UNAUTHORIZED,
+                message: 'Email déja utilisé',
+                data: null,
             };
         }
         const hash = await bcrypt.hash(createUserDto.password, this.SALT);
         createUserDto.password = hash;
         this.userRepository.addUser(createUserDto);
         return {
+            status: Status.OK,
             message: 'Utilisateur enregistré',
-            error: null,
+            data: null,
         };
     }
 }
