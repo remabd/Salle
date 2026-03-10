@@ -31,9 +31,9 @@
                 <li><a href="#/dashboard">Dashboard</a></li>
             {/if}
             <a href="#/profile">Profil</a>
-            <button onclick={disconnect}>Déconnection</button>
+            <button onclick={disconnect}>Déconnexion</button>
         {:else}
-            <a href="#/">Connection</a>
+            <a href="#/">Connexion</a>
         {/if}
     </ul>
 </header>

@@ -64,7 +64,7 @@ export default class AuthController {
     }
 
     public logout(): void {
-        this.authRepository.removeConnection();
+        this.authRepository.removeConnexion();
     }
 
     public async register(createUserDto: CreateUserDto): Promise<Response> {

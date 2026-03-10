@@ -19,7 +19,7 @@ export default class AuthRepository {
         this.synchronize();
     }
 
-    removeConnection(): void {
+    removeConnexion(): void {
         this.connexion = null;
         this.synchronize();
     }
