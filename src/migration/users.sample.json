@@ -1,0 +1,26 @@
+[
+    {
+        "id": "2e695e43-680b-41c8-bb27-cc6d75ae602f",
+        "firstName": "Rémi",
+        "lastName": "Abdallah",
+        "email": "remiabdallah3@gmail.com",
+        "password": "$2y$10$Lhvw/cLJiwR7WHM6gFKIXuJ.Dm7eg4UX8gqPtvUYOEEP9UvR/OzVu",
+        "admin": true
+    },
+    {
+        "id": "2e695e43-680b-41c8-bb27-cc6d75ae612f",
+        "firstName": "Pierre",
+        "lastName": "Nouhet",
+        "email": "pnouhet@gmail.com",
+        "password": "$2y$10$Lhvw/cLJiwR7WHM6gFKIXuJ.Dm7eg4UX8gqPtvUYOEEP9UvR/OzVu",
+        "admin": true
+    },
+    {
+        "id": "2e695e43-680b-41c8-bb27-cc6d75ae622f",
+        "firstName": "Georges",
+        "lastName": "Martin",
+        "email": "test@gmail.com",
+        "password": "$2y$10$Lhvw/cLJiwR7WHM6gFKIXuJ.Dm7eg4UX8gqPtvUYOEEP9UvR/OzVu",
+        "admin": false
+    }
+]
