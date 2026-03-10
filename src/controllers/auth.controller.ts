@@ -2,7 +2,7 @@ import { Status, type Response } from '../models/response.entity';
 import type { LoginDto, CreateUserDto, User } from '../models/user.entity';
 import AuthRepository from '../repository/auth.repository';
 import UserRepository from '../repository/user.repository';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 
 export default class AuthController {
     private authRepository: AuthRepository;
