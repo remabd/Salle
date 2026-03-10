@@ -8,6 +8,7 @@ export default class UserRepository {
     constructor() {
         const usersData = localStorage.getItem(this.USERS_KEY);
         this.users = usersData ? JSON.parse(usersData) : [];
+        this.synchronize();
     }
 
     getUsers(): User[] {

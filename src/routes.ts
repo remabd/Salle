@@ -1,19 +1,15 @@
 import Login from './containers/Login.svelte';
 import NotFound from './containers/NotFound.svelte';
+import DashBoard from './containers/Dashboard.svelte';
+import Salle from './containers/Salle.svelte';
+import Profile from './containers/Profile.svelte';
 
 export const routes = {
     '/': Login,
 
-    // Wrapping the Author component
-    // '/author/:first/:last?': wrap({
-    //     asyncComponent: () => import('./routes/Author.svelte')
-    // }),
+    '/dashboard': DashBoard,
+    '/profile': Profile,
+    '/salle': Salle,
 
-    // Wrapping the Book component
-    // '/book/*': wrap({
-    //     asyncComponent: () => import('./routes/Book.svelte')
-    // }),
-
-    // Catch-all route last
     '*': NotFound,
 };

@@ -8,6 +8,11 @@ export default class AuthRepository {
     constructor() {
         const connexionData = sessionStorage.getItem(this.CONNEXION_KEY);
         this.connexion = connexionData ? JSON.parse(connexionData) : null;
+        this.synchronize();
+    }
+
+    getConnexion(): UserHead | null {
+        return this.connexion;
     }
 
     addConnexion(userhead: UserHead): void {

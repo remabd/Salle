@@ -1,5 +1,5 @@
 import { Status, type Response } from '../models/response.entity';
-import type { LoginDto, CreateUserDto, User } from '../models/user.entity';
+import type { LoginDto, CreateUserDto, User, UserHead } from '../models/user.entity';
 import AuthRepository from '../repository/auth.repository';
 import UserRepository from '../repository/user.repository';
 import * as bcrypt from 'bcryptjs';
@@ -44,6 +44,22 @@ export default class AuthController {
             status: Status.OK,
             message: 'Utilisateur connecté',
             data: user,
+        };
+    }
+
+    public getConnexion(): Response<UserHead> {
+        const connexion = this.authRepository.getConnexion();
+        if (!connexion) {
+            return {
+                status: Status.NOT_FOUND,
+                message: 'No connexion',
+                data: null,
+            };
+        }
+        return {
+            status: Status.OK,
+            message: null,
+            data: connexion,
         };
     }
 
