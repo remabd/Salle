@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import AuthController from '../controllers/auth.controller';
+    import { push } from 'svelte-spa-router';
 
     let isConnected = $state(false);
     let isAdmin = $state(false);
@@ -19,6 +20,7 @@
         isConnected = false;
         isAdmin = false;
         authController.logout();
+        push('#/');
     }
 </script>
 
