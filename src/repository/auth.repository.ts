@@ -8,7 +8,6 @@ export default class AuthRepository {
     constructor() {
         const connexionData = sessionStorage.getItem(this.CONNEXION_KEY);
         this.connexion = connexionData ? JSON.parse(connexionData) : null;
-        this.synchronize();
     }
 
     getConnexion(): UserHead | null {
@@ -28,6 +27,7 @@ export default class AuthRepository {
     synchronize(): void {
         if (!this.connexion) {
             sessionStorage.removeItem(this.CONNEXION_KEY);
+            return;
         }
         sessionStorage.setItem(this.CONNEXION_KEY, JSON.stringify(this.connexion));
     }

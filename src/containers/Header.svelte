@@ -8,22 +8,22 @@
     onMount(() => {
         const authController = new AuthController();
         const connexion = authController.getConnexion();
-        if (connexion) {
+        if (connexion.data) {
             isConnected = true;
-            connexion.data?.admin ? true : false;
+            isAdmin = connexion.data?.admin ? true : false;
         }
     });
 
     function disconnect() {
         const authController = new AuthController();
+        isConnected = false;
+        isAdmin = false;
         authController.logout();
     }
 </script>
 
 <header>
     <ul>
-        <li><a href="#/">Accueil</a></li>
-
         {#if isConnected}
             {#if !isAdmin}
                 <li><a href="#/salle">Resever</a></li>
