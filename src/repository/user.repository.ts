@@ -1,17 +1,13 @@
-import type { User, CreateUserDto, UpdateUserDto } from '../models/User';
+import type { User, CreateUserDto, UpdateUserDto } from '../models/user.entity';
 import { v4 as uuid } from 'uuid';
 
 export default class UserRepository {
     private USERS_KEY = 'users';
-    private CONNEXION_KEY = 'connexion';
     private users: User[];
-    private connexion: User[] | null;
 
     constructor() {
         const usersData = localStorage.getItem(this.USERS_KEY);
         this.users = usersData ? JSON.parse(usersData) : [];
-        const connexionData = sessionStorage.getItem(this.CONNEXION_KEY);
-        this.connexion = connexionData ? JSON.parse(connexionData) : null;
     }
 
     getUsers(): User[] {

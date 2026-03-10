@@ -1,18 +1,17 @@
-import type { CreateUserDto, LoginDto, UserHead } from '../models/User';
-import UserRepository from './UserRepository';
+import type { LoginDto, CreateUserDto } from '../models/user.entity';
+import AuthRepository from '../repository/auth.repository';
+import UserRepository from '../repository/user.repository';
 import * as bcrypt from 'bcrypt';
 
-export default class AuthRepository {
-    private CONNEXION_KEY = 'connexion';
+export default class AuthController {
+    private authRepository: AuthRepository;
+    private userRepository: UserRepository;
+
     private SALT = 10;
 
-    private userRepository: UserRepository;
-    private connexion: UserHead | null;
-
     constructor() {
+        this.authRepository = new AuthRepository();
         this.userRepository = new UserRepository();
-        const connexionData = sessionStorage.getItem(this.CONNEXION_KEY);
-        this.connexion = connexionData ? JSON.parse(connexionData) : null;
     }
 
     public async login(loginDto: LoginDto): Promise<boolean> {
@@ -20,12 +19,12 @@ export default class AuthRepository {
         if (user) {
             const valid = await bcrypt.compare(loginDto.password, user.password);
             if (valid) {
-                this.connexion = {
+                const connexion = {
                     id: user.id,
                     email: user.email,
                     admin: user.admin,
                 };
-                this.synchronize();
+                this.authRepository.addConnexion(connexion);
                 return true;
             } else {
                 return false;
@@ -36,13 +35,13 @@ export default class AuthRepository {
         }
     }
 
+    public logout(): void {
+        this.authRepository.removeConnection();
+    }
+
     public async register(createUserDto: CreateUserDto): Promise<void> {
         const hash = await bcrypt.hash(createUserDto.password, this.SALT);
         createUserDto.password = hash;
         this.userRepository.addUser(createUserDto);
-    }
-
-    synchronize(): void {
-        sessionStorage.setItem(this.CONNEXION_KEY, JSON.stringify(this.connexion));
     }
 }
