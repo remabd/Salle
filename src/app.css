@@ -1,3 +1,8 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
 :root {
     font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
     line-height: 1.5;
@@ -63,6 +68,26 @@ button:hover {
 button:focus,
 button:focus-visible {
     outline: 4px auto -webkit-focus-ring-color;
+}
+
+form {
+    display: grid;
+    background-color: white;
+    padding: 40px;
+    border-radius: 8px;
+    color: #1a1a1a;
+    gap: 8px;
+    text-align: start;
+    margin: 20px 0;
+}
+
+form input {
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.errorMessage {
+    color: rgb(218, 0, 0);
 }
 
 @media (prefers-color-scheme: light) {

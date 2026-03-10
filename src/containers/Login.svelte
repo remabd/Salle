@@ -26,10 +26,10 @@
 <h1>Connexion</h1>
 <p class="errorMessage">{errorMessage}</p>
 <form {onsubmit}>
-    <label for="email">email</label>
+    <label for="email">Email</label>
     <input type="email" name="email" id="email" bind:value={email} />
 
-    <label for="password">password</label>
+    <label for="password">Mot de passe</label>
     <input type="password" name="password" id="password" bind:value={password} />
 
     <input type="submit" value="Se connecter" />

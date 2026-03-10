@@ -20,7 +20,7 @@ export default class AuthController {
         if (!user) {
             return {
                 status: Status.UNAUTHORIZED,
-                message: 'indentifiants incorrects',
+                message: 'Identifiants incorrects',
                 data: null,
             };
         }
@@ -29,7 +29,7 @@ export default class AuthController {
         if (!valid) {
             return {
                 status: Status.UNAUTHORIZED,
-                message: 'indentifiants incorrects',
+                message: 'Identifiants incorrects',
                 data: null,
             };
         }
