@@ -1,4 +1,4 @@
-import { Status, type Response } from '../models/response.entity';
+import { type Response } from '../models/response.entity';
 import type { LoginDto, CreateUserDto, User, UserHead } from '../models/user.entity';
 import AuthRepository from '../repository/auth.repository';
 import UserRepository from '../repository/user.repository';
@@ -19,18 +19,16 @@ export default class AuthController {
         const user = this.userRepository.getUserByEmail(loginDto.email);
         if (!user) {
             return {
-                status: Status.UNAUTHORIZED,
-                message: 'indentifiants incorrects',
-                data: null,
+                success: false,
+                error: { message: 'indentifiants incorrects' },
             };
         }
 
         const valid = await bcrypt.compare(loginDto.password, user.password);
         if (!valid) {
             return {
-                status: Status.UNAUTHORIZED,
-                message: 'indentifiants incorrects',
-                data: null,
+                success: false,
+                error: { message: 'indentifiants incorrects' },
             };
         }
 
@@ -41,8 +39,7 @@ export default class AuthController {
         };
         this.authRepository.addConnexion(connexion);
         return {
-            status: Status.OK,
-            message: 'Utilisateur connecté',
+            success: true,
             data: user,
         };
     }
@@ -51,14 +48,12 @@ export default class AuthController {
         const connexion = this.authRepository.getConnexion();
         if (!connexion) {
             return {
-                status: Status.NOT_FOUND,
-                message: 'No connexion',
-                data: null,
+                success: false,
+                error: { message: 'No connexion' },
             };
         }
         return {
-            status: Status.OK,
-            message: null,
+            success: true,
             data: connexion,
         };
     }
@@ -71,17 +66,15 @@ export default class AuthController {
         const exist = this.userRepository.getUserByEmail(createUserDto.email);
         if (exist) {
             return {
-                status: Status.UNAUTHORIZED,
-                message: 'Email déja utilisé',
-                data: null,
+                success: false,
+                error: { message: 'Email déja utilisé' },
             };
         }
         const hash = await bcrypt.hash(createUserDto.password, this.SALT);
         createUserDto.password = hash;
         this.userRepository.addUser(createUserDto);
         return {
-            status: Status.OK,
-            message: 'Utilisateur enregistré',
+            success: true,
             data: null,
         };
     }
