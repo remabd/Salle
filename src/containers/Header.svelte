@@ -9,9 +9,9 @@
     onMount(() => {
         const authController = new AuthController();
         const connexion = authController.getConnexion();
-        if (connexion.data) {
+        if (connexion.success) {
             isConnected = true;
-            isAdmin = connexion.data?.admin ? true : false;
+            isAdmin = connexion.data.admin;
         }
     });
 
