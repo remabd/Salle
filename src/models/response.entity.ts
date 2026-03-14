@@ -1,12 +1,13 @@
-export interface Response<T = null> {
-    status: Status;
-    data: T | null;
-    message: string | null;
-}
+export type Response<D = null, E = ApiError> =
+    | {
+          success: true;
+          data: D;
+      }
+    | {
+          success: false;
+          error: E;
+      };
 
-export enum Status {
-    OK,
-    UNAUTHORIZED,
-    NOT_FOUND,
-    INTERNAL,
+export interface ApiError {
+    message: string;
 }

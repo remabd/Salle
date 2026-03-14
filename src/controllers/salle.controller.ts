@@ -1,7 +1,6 @@
-import { Status } from '../models/response.entity';
 import type { CreateSalleDto, Salle, UpdateSalleDto } from '../models/salle.entity';
 import SalleRepository from '../repository/salle.repository';
-import type { Response } from '../models/response.entity';
+import type { ApiError, Response } from '../models/response.entity';
 import { v4 as uuid } from 'uuid';
 
 export default class SalleController {
@@ -11,43 +10,38 @@ export default class SalleController {
         this.salleRepository = new SalleRepository();
     }
 
-    find(): Response<Salle[]> {
+    find(): Response<Salle[], ApiError> {
         const salles = this.salleRepository.find();
         return {
-            status: Status.OK,
-            message: null,
+            success: true,
             data: salles,
         };
     }
 
-    findOneById(id: string): Response<Salle> {
+    findOneById(id: string): Response<Salle, ApiError> {
         const salle = this.salleRepository.findOneById(id);
         if (!salle) {
             return {
-                status: Status.NOT_FOUND,
-                message: 'Salle manquante',
-                data: null,
+                success: false,
+                error: { message: 'Salle introuvable' },
             };
         }
         return {
-            status: Status.OK,
-            message: null,
+            success: true,
             data: salle,
         };
     }
 
-    findOneByName(name: string): Response<Salle> {
+    findOneByName(name: string): Response<Salle, ApiError> {
         const salle = this.salleRepository.findOneByName(name);
         if (!salle) {
             return {
-                status: Status.NOT_FOUND,
-                message: 'Salle manquante',
-                data: null,
+                success: false,
+                error: { message: 'Salle introuvable' },
             };
         }
         return {
-            status: Status.OK,
-            message: null,
+            success: true,
             data: salle,
         };
     }
@@ -56,16 +50,14 @@ export default class SalleController {
         const exist = this.salleRepository.findOneByName(createSalleDto.name);
         if (exist) {
             return {
-                status: Status.UNAUTHORIZED,
-                message: 'Une salle existe déja à ce nom',
-                data: null,
+                success: false,
+                error: { message: 'Une salle existe déja à ce nom' },
             };
         }
         const salle: Salle = { ...createSalleDto, id: uuid() };
         this.salleRepository.save(salle);
         return {
-            status: Status.OK,
-            message: 'created',
+            success: true,
             data: null,
         };
     }
@@ -74,15 +66,13 @@ export default class SalleController {
         const exist = this.salleRepository.findOneById(id);
         if (!exist) {
             return {
-                status: Status.NOT_FOUND,
-                message: null,
-                data: null,
+                success: false,
+                error: { message: 'Salle introuvable' },
             };
         }
         this.salleRepository.remove(id);
         return {
-            status: Status.OK,
-            message: null,
+            success: true,
             data: null,
         };
     }
@@ -91,15 +81,13 @@ export default class SalleController {
         const exist = this.salleRepository.findOneById(id);
         if (!exist) {
             return {
-                status: Status.NOT_FOUND,
-                message: null,
-                data: null,
+                success: false,
+                error: { message: 'Salle introuvable' },
             };
         }
         this.salleRepository.update({ ...updateSalleDto, id: id });
         return {
-            status: Status.OK,
-            message: null,
+            success: true,
             data: null,
         };
     }
