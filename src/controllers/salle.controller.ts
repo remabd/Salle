@@ -1,6 +1,6 @@
 import type { CreateSalleDto, Salle, UpdateSalleDto } from '../models/salle.entity';
 import SalleRepository from '../repository/salle.repository';
-import type { ApiError, Response } from '../models/response.entity';
+import type { Response } from '../models/response.entity';
 import { v4 as uuid } from 'uuid';
 
 export default class SalleController {
@@ -10,7 +10,7 @@ export default class SalleController {
         this.salleRepository = new SalleRepository();
     }
 
-    find(): Response<Salle[], ApiError> {
+    find(): Response<Salle[]> {
         const salles = this.salleRepository.find();
         return {
             success: true,
@@ -18,7 +18,7 @@ export default class SalleController {
         };
     }
 
-    findOneById(id: string): Response<Salle, ApiError> {
+    findOneById(id: string): Response<Salle> {
         const salle = this.salleRepository.findOneById(id);
         if (!salle) {
             return {
@@ -32,7 +32,7 @@ export default class SalleController {
         };
     }
 
-    findOneByName(name: string): Response<Salle, ApiError> {
+    findOneByName(name: string): Response<Salle> {
         const salle = this.salleRepository.findOneByName(name);
         if (!salle) {
             return {
