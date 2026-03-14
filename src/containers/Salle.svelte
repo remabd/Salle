@@ -1,80 +1,87 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import type { Salle } from '../models/salle.entity';
+    import type { Salle, SalleWithReservations } from '../models/salle.entity';
     import SalleController from '../controllers/salle.controller';
+    import ReservationController from '../controllers/reservation.controller';
+
     const salleController = new SalleController();
-    let salles = $state<Salle[]>([]);
-    let displayed = $state<Salle[]>([]);
+    const reservationController = new ReservationController();
+
+    let salles = $state<SalleWithReservations[]>([]);
 
     let capacity = $state(0);
     let computers = $state(0);
-    let teacherComputer = $state(false);
-    let airCool = $state(false);
-    // let filters = $derived({
-    //     capacity: capacity,
-    //     computers: computers,
-    //     teacherComputer: teacherComputer,
-    //     airCool: airCool,
-    // });
+    let teacherComputer = $state<boolean | null>(null);
+    let airCool = $state<boolean | null>(null);
+
+    let displayed = $derived(
+        salles.filter(
+            (salle: Salle) =>
+                salle.capacity >= capacity &&
+                salle.computers >= computers &&
+                (teacherComputer === null || salle.teacherComputer === teacherComputer) &&
+                (airCool === null || salle.aircool === airCool)
+        )
+    );
 
     onMount(() => {
+        let _salles: Salle[] = [];
         const res = salleController.find();
         if (res.success) {
-            salles = res.data;
+            _salles = res.data;
         }
-    });
-
-    function onsubmit(e: SubmitEvent) {
-        e.preventDefault();
-        refreshFilters();
-    }
-
-    function refreshFilters() {
-        salles.forEach((salle: Salle) => {
-            if (
-                salle.capacity < capacity ||
-                salle.computers < computers ||
-                (teacherComputer && !salle.teacherComputer) ||
-                (airCool && !salle.aircool)
-            ) {
-            } else {
-                displayed.push(salle);
+        _salles.forEach((s: Salle) => {
+            const _res = reservationController.findBySalleId(s.id);
+            if (_res.success) {
+                salles.push({
+                    ...s,
+                    reservations: _res.data,
+                });
             }
         });
-    }
+    });
 </script>
 
 <h1>Réserver une salle</h1>
 
 <section>
     <h2>Filtres</h2>
-    <form {onsubmit}>
+    <div>
         <label for="capacity">Capacité</label>
-        <input type="number" value={capacity} name="capacity" />
+        <input type="number" id="capacity" bind:value={capacity} />
 
         <label for="computers">Nombre d'ordinateurs</label>
-        <input type="number" value={computers} name="computers" />
+        <input type="number" id="computers" bind:value={computers} />
 
-        {#each [true, false] as boolean}
-            <label>
-                <input type="radio" name="teacherComputer" value={teacherComputer} />
-                {boolean}
-            </label>
-        {/each}
+        <fieldset>
+            <legend>Ordinateur professeur</legend>
+            {#each [true, false, null] as option}
+                <label>
+                    <input
+                        type="radio"
+                        name="teacherComputer"
+                        value={option}
+                        bind:group={teacherComputer}
+                    />
+                    {option === null ? 'Peu importe' : option ? 'Oui' : 'Non'}
+                </label>
+            {/each}
+        </fieldset>
 
-        {#each [true, false] as boolean}
-            <label>
-                <input type="radio" name="airCool" value={airCool} />
-                {boolean}
-            </label>
-        {/each}
-
-        <input type="submit" value="Valider" />
-    </form>
+        <fieldset>
+            <legend>Climatisation</legend>
+            {#each [true, false, null] as option}
+                <label>
+                    <input type="radio" name="airCool" value={option} bind:group={airCool} />
+                    {option === null ? 'Peu importe' : option ? 'Oui' : 'Non'}
+                </label>
+            {/each}
+        </fieldset>
+    </div>
 </section>
 
 <section>
-    <h2>Salles</h2>
+    <h2>Salles ({displayed.length})</h2>
     {#each displayed as s}
         <p>{s.name}</p>
     {/each}
