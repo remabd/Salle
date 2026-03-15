@@ -4,7 +4,7 @@
         "name": "corriandre",
         "capacity": 28,
         "computers": 28,
-        "teacherComputers": false,
+        "teacherComputer": false,
         "aircool": true
     },
     {
@@ -12,7 +12,7 @@
         "name": "Basilic",
         "capacity": 15,
         "computers": 0,
-        "teacherComputers": true,
+        "teacherComputer": true,
         "aircool": true
     },
     {
@@ -20,7 +20,7 @@
         "name": "Menthe",
         "capacity": 40,
         "computers": 0,
-        "teacherComputers": false,
+        "teacherComputer": false,
         "aircool": false
     },
     {
@@ -28,7 +28,7 @@
         "name": "Aneth",
         "capacity": 40,
         "computers": 0,
-        "teacherComputers": false,
+        "teacherComputer": false,
         "aircool": true
     },
     {
@@ -36,7 +36,7 @@
         "name": "Thym",
         "capacity": 15,
         "computers": 15,
-        "teacherComputers": true,
+        "teacherComputer": true,
         "aircool": false
     },
     {
@@ -44,7 +44,7 @@
         "name": "Estragon",
         "capacity": 15,
         "computers": 0,
-        "teacherComputers": false,
+        "teacherComputer": false,
         "aircool": true
     }
 ]
