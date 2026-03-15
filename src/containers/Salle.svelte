@@ -1,4 +1,24 @@
 <script lang="ts">
+    import { onMount } from 'svelte';
+    import SalleController from '../controllers/salle.controller';
+    import type { Salle } from '../models/salle.entity';
+    import ManageSalles from '../components/ManageSalles.svelte';
+
+    const salleController = new SalleController();
+    
+    let sallesDispos: Salle[] = [];
+
+    function loadSalles() {
+        const response = salleController.find();
+        if (response.success && response.data) {
+            sallesDispos = response.data;
+        }
+    }
+
+    onMount(() => {
+        loadSalles();
+    });
+
     const today = new Date().toISOString().split('T')[0];
     let selectedDate = today;
     
@@ -14,22 +34,20 @@
     
     const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
 
-    let sallesDispos = [
-        { id: 1, name: 'Salle classique 101', type: 'classique', clim: false, places: 30 },
-        { id: 2, name: 'Salle classique 102', type: 'classique', clim: true, places: 35 },
-        { id: 3, name: 'Salle info 202', type: 'informatique', clim: true, places: 25 },
-        { id: 4, name: 'Amphi A', type: 'amphi', clim: true, places: 150 },
-    ];
-
     // filtres des salles
-    let filterPlaces = 0;
+    let filterCapacity = 0;
     let filterType = 'tous';
-    let filterClim = false;
+    let filterAircool = false;
     
     $: sallesFiltrees = sallesDispos.filter(salle => {
-        const correspondPlaces = salle.places >= filterPlaces;
-        const correspondType = filterType === 'tous' || salle.type === filterType;
-        const correspondClim = !filterClim || salle.clim === filterClim;
+        const correspondPlaces = salle.capacity >= filterCapacity;
+        
+        let salleType = 'classique';
+        if (salle.capacity >= 100) salleType = 'amphi';
+        else if (salle.computers > 0) salleType = 'informatique';
+        
+        const correspondType = filterType === 'tous' || salleType === filterType;
+        const correspondClim = !filterAircool || salle.aircool === filterAircool;
         return correspondPlaces && correspondType && correspondClim;
     });
 
@@ -78,7 +96,7 @@
 <div class="filters-bar">
     <div class="filter-group">
         <label for="filter-places">Places minimum :</label>
-        <input id="filter-places" type="number" min="0" max="250" step="5" bind:value={filterPlaces} />
+        <input id="filter-places" type="number" min="0" max="250" step="5" bind:value={filterCapacity} />
     </div>
 
     <div class="filter-group">
@@ -94,7 +112,7 @@
     <div class="filter-group">
         <span>Climatisation</span>
         <label for="filter-clim">
-            <input id="filter-clim" type="checkbox" bind:checked={filterClim} />
+            <input id="filter-clim" type="checkbox" bind:checked={filterAircool} />
         </label>
     </div>
 </div>
@@ -150,7 +168,7 @@
                     <li>
                         <span>
                             <strong>{salle.name}</strong> 
-                            ({salle.places} places, Type: {salle.type}, Clim: {salle.clim ? 'Oui' : 'Non'})
+                            ({salle.capacity} places, Type: {salle.capacity >= 100 ? 'amphi' : (salle.computers > 0 ? 'informatique' : 'classique')}, Clim: {salle.aircool ? 'Oui' : 'Non'})
                         </span>
                         <button>Réserver la salle</button>
                     </li>
@@ -163,16 +181,6 @@
 </div>
 
 <style>
-    :root {
-        --borderRadius: 8px;
-        --slatedark: #1a1a1a;
-        --softwhite: #f1f1f1;
-    }
-
-    h1 {
-        margin-bottom: 20px;
-    }
-
     .dashboard-contenu {
         display: flex;
         gap: 16px;
