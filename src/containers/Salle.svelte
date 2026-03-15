@@ -3,6 +3,7 @@
     import type { Salle, SalleWithReservations } from '../models/salle.entity';
     import SalleController from '../controllers/salle.controller';
     import ReservationController from '../controllers/reservation.controller';
+    import DatePicker from '../components/DatePicker.svelte';
 
     const salleController = new SalleController();
     const reservationController = new ReservationController();
@@ -13,6 +14,8 @@
     let computers = $state(0);
     let teacherComputer = $state<boolean | null>(null);
     let airCool = $state<boolean | null>(null);
+
+    let selected = $state<string | null>();
 
     let displayed = $derived(
         salles.filter(
@@ -77,6 +80,11 @@
                 </label>
             {/each}
         </fieldset>
+
+        <fieldset>
+            <legend>Date</legend>
+            <DatePicker bind:selected />
+        </fieldset>
     </div>
 </section>
 
@@ -86,3 +94,6 @@
         <p>{s.name}</p>
     {/each}
 </section>
+
+<style>
+</style>

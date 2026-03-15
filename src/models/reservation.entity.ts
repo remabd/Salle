@@ -2,7 +2,7 @@ export interface Reservation {
     id: string;
     salleId: string;
     userId: string;
-    date: Date;
+    date: string;
 }
 
 export type CreateReservationDto = Omit<Reservation, 'id'>;
