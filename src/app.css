@@ -111,37 +111,6 @@ header ul {
     list-style: none;
 }
 
-.dashboard-contenu {
-    display: flex;
-    gap: 16px;
-    margin: 20px 0;
-}
-
-.dashboard-contenu button {
-    background-color: var(--softwhite);
-    color: var(--slatedark);
-}
-
-.calendar {
-    padding: 24px;
-    background-color: var(--slatedark);
-    border-radius: var(--borderRadius);
-}
-
-.salles-container {
-    width: 100%;
-    padding: 40px;
-    background-color: var(--slatedark);
-    border-radius: var(--borderRadius);
-}
-
-.salles-container li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
-}
-
 @media (prefers-color-scheme: light) {
     :root {
         color: #213547;
