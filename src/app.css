@@ -16,6 +16,9 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    --borderRadius: 8px;
+    --slatedark: #1a1a1a;
+    --softwhite: #f1f1f1;
 }
 
 a {
@@ -30,7 +33,7 @@ a:hover {
 body {
     margin: 0;
     display: flex;
-    place-items: center;
+    /* place-items: center; */
     min-width: 320px;
     min-height: 100vh;
 }
@@ -51,7 +54,7 @@ h1 {
     text-align: center;
 }
 
-button {
+button, .profile-btn {
     border-radius: 8px;
     border: 1px solid transparent;
     padding: 0.6em 1.2em;
@@ -70,12 +73,23 @@ button:focus-visible {
     outline: 4px auto -webkit-focus-ring-color;
 }
 
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: start;
+}
+
+ul li {
+    margin: 20px 0;
+}
+
 form {
     display: grid;
-    background-color: white;
+    background-color: var(--softwhite);
     padding: 40px;
     border-radius: 8px;
-    color: #1a1a1a;
+    color: black;
     gap: 8px;
     text-align: start;
     margin: 20px 0;
@@ -88,6 +102,44 @@ form input {
 
 .errorMessage {
     color: rgb(218, 0, 0);
+}
+
+header ul {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    list-style: none;
+}
+
+.dashboard-contenu {
+    display: flex;
+    gap: 16px;
+    margin: 20px 0;
+}
+
+.dashboard-contenu button {
+    background-color: var(--softwhite);
+    color: var(--slatedark);
+}
+
+.calendar {
+    padding: 24px;
+    background-color: var(--slatedark);
+    border-radius: var(--borderRadius);
+}
+
+.salles-container {
+    width: 100%;
+    padding: 40px;
+    background-color: var(--slatedark);
+    border-radius: var(--borderRadius);
+}
+
+.salles-container li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
 }
 
 @media (prefers-color-scheme: light) {

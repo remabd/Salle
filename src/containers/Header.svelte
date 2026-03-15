@@ -32,8 +32,10 @@
             {:else}
                 <li><a href="#/dashboard">Dashboard</a></li>
             {/if}
-            <a href="#/profile">Profil</a>
-            <button onclick={disconnect}>Déconnexion</button>
+            <div>
+                <a class="profile-btn" href="#/profile">Profil</a>
+                <button onclick={disconnect}>Déconnexion</button>
+            </div>
         {:else}
             <a href="#/">Connexion</a>
         {/if}
