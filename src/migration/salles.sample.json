@@ -10,7 +10,7 @@
     {
         "id": 2,
         "name": "Salle Info",
-        "capacity": 30,
+        "capacity": 25,
         "computers": 15,
         "teacherComputer": 1,
         "aircool": true

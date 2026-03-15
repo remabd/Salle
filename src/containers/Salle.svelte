@@ -3,6 +3,8 @@
     import SalleController from '../controllers/salle.controller';
     import type { Salle } from '../models/salle.entity';
     import ManageSalles from '../components/ManageSalles.svelte';
+    import CalendarPopup from '../components/CalendarPopup.svelte';
+    import ReservationPopup from '../components/ReservationPopup.svelte';
 
     const salleController = new SalleController();
     
@@ -23,16 +25,7 @@
     let selectedDate = today;
     
     let showCalendarPopup = false;
-    let currentDate = new Date();
-    let currentMonth = currentDate.getMonth();
-    let currentYear = currentDate.getFullYear();
-
-    $: daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-    $: firstDay = new Date(currentYear, currentMonth, 1).getDay();
-    $: blanks = Array(firstDay === 0 ? 6 : firstDay - 1).fill(0);
-    $: days = Array.from({length: daysInMonth}, (_, i) => i + 1);
-    
-    const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
+    let showSallePopup = false;
 
     // filtres des salles
     let filterCapacity = 0;
@@ -51,43 +44,25 @@
         return correspondPlaces && correspondType && correspondClim;
     });
 
-    function handleDateChange() {
+    function handleDateChange(event: CustomEvent<string>) {
+        selectedDate = event.detail;
         console.log("Selected date:", selectedDate);
+    }
+
+    function handleReservationConfirm(event: CustomEvent<{salle: Salle, date: string, creneau: string}>) {
+        console.log("Reservation confirmée :", event.detail);
+        // enregistrer la réservation ?
     }
 
     function openCalendar() {
         showCalendarPopup = true;
     }
 
-    function closeCalendar() {
-        showCalendarPopup = false;
-    }
+    let selectedSalle: Salle | null = null;
 
-    function selectDate(day: number) {
-        const yyyy = currentYear;
-        const mm = String(currentMonth + 1).padStart(2, '0');
-        const dd = String(day).padStart(2, '0');
-        selectedDate = `${yyyy}-${mm}-${dd}`;
-        showCalendarPopup = false;
-        handleDateChange();
-    }
-
-    function prevMonth() {
-        if (currentMonth === 0) {
-            currentMonth = 11;
-            currentYear--;
-        } else {
-            currentMonth--;
-        }
-    }
-
-    function nextMonth() {
-        if (currentMonth === 11) {
-            currentMonth = 0;
-            currentYear++;
-        } else {
-            currentMonth++;
-        }
+    function openSalleReservation(salle: Salle) {
+        selectedSalle = salle;
+        showSallePopup = true;
     }
 </script>
 
@@ -128,37 +103,12 @@
         </button>
     </div>
 
-    {#if showCalendarPopup}
-        <div class="modal-backdrop" on:click={closeCalendar}>
-            <div class="calendar-modal" on:click|stopPropagation>
-                <div class="calendar-header">
-                    <button class="nav-btn" on:click={prevMonth}>&lt;</button>
-                    <h3>{monthNames[currentMonth]} {currentYear}</h3>
-                    <button class="nav-btn" on:click={nextMonth}>&gt;</button>
-                </div>
-                
-                <div class="days-header">
-                    <span>Lu</span><span>Ma</span><span>Me</span><span>Je</span><span>Ve</span><span>Sa</span><span>Di</span>
-                </div>
-                
-                <div class="calendar-grid">
-                    {#each Array(blanks.length) as _}
-                        <div class="empty-day"></div>
-                    {/each}
-                    {#each days as day}
-                        {@const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`}
-                        <button 
-                            class="day-btn" 
-                            class:selected={dateStr === selectedDate} 
-                            class:today={dateStr === today && dateStr !== selectedDate}
-                            on:click={() => selectDate(day)}>{day}</button>
-                    {/each}
-                </div>
-                
-                <button class="close-btn" on:click={closeCalendar}>Fermer</button>
-            </div>
-        </div>
-    {/if}
+    <CalendarPopup 
+        bind:show={showCalendarPopup}
+        bind:selectedDate={selectedDate}
+        on:close={() => showCalendarPopup = false}
+        on:select={handleDateChange}
+    />
 
     <div class="salles-container">
         <h2>Salles disponibles</h2>
@@ -167,10 +117,18 @@
                 {#each sallesFiltrees as salle}
                     <li>
                         <span>
-                            <strong>{salle.name}</strong> 
-                            ({salle.capacity} places, Type: {salle.capacity >= 100 ? 'amphi' : (salle.computers > 0 ? 'informatique' : 'classique')}, Clim: {salle.aircool ? 'Oui' : 'Non'})
+                            <strong>{salle.name}</strong>
+                            ({salle.capacity} places)
+                            <span id="tag">{salle.capacity >= 100 ? "Amphi" : (salle.computers > 0 ? "Informatique" : "Classique")}</span>
+                            {#if salle.aircool}
+                                <span id="tag">Clim</span>
+                            {/if}
                         </span>
-                        <button>Réserver la salle</button>
+                        <button
+                            type="button"
+                            on:click={() => openSalleReservation(salle)}
+                            title="Réserver la salle"
+                        >Réserver la salle</button>
                     </li>
                 {/each}
             </ul>
@@ -179,6 +137,14 @@
         {/if}
     </div>
 </div>
+
+<ReservationPopup 
+    bind:show={showSallePopup}
+    salle={selectedSalle}
+    selectedDate={selectedDate}
+    on:close={() => { showSallePopup = false; selectedSalle = null; }}
+    on:confirm={handleReservationConfirm}
+/>
 
 <style>
     .dashboard-contenu {
@@ -244,99 +210,11 @@
         vertical-align: middle;
     }
 
-    .modal-backdrop {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-    }
-    
-    .calendar-modal {
-        background: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        width: 320px;
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    .calendar-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    
-    .calendar-header h3 {
-        margin: 0;
-        font-size: 1.2rem;
-        color: #1a1a1a;
-    }
-
-    .days-header {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        text-align: center;
-        font-weight: bold;
-        color: #666;
-        margin-bottom: 5px;
-    }
-    
-    .calendar-grid {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 5px;
-    }
-    
-    .day-btn {
-        background: none;
-        border: 1px solid #eee;
-        padding: 10px;
-        border-radius: 4px;
-        cursor: pointer;
-        text-align: center;
-    }
-    
-    .day-btn:hover {
-        background: #007bff;
-        color: white;
-    }
-    
-    .day-btn.selected {
-        background: #007bff;
-        color: white;
-        font-weight: bold;
-    }
-    
-    .day-btn.today {
-        background: #e0e0e0;
-        font-weight: bold;
-    }
-    
-    .empty-day {
-        padding: 5px;
-    }
-    
-    .nav-btn {
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        cursor: pointer;
-    }
-    
-    .close-btn {
-        margin-top: 10px;
-        padding: 10px;
-        background: #f4f4f4;
-        border: 1px solid #ccc;
-        cursor: pointer;
-        border-radius: 4px;
+    #tag {
+        padding: 4px 8px;
+        font-size: 12px;
+        border-radius: 32px;
+        background-color: var(--softwhite);
+        color: var(--slatedark);
     }
 </style>
