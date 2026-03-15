@@ -9,9 +9,9 @@
     onMount(() => {
         const authController = new AuthController();
         const connexion = authController.getConnexion();
-        if (connexion.success) {
+        if (connexion.data) {
             isConnected = true;
-            isAdmin = connexion.data.admin;
+            isAdmin = connexion.data?.admin ? true : false;
         }
     });
 
@@ -32,8 +32,10 @@
             {:else}
                 <li><a href="#/dashboard">Dashboard</a></li>
             {/if}
-            <a href="#/profile">Profil</a>
-            <button onclick={disconnect}>Déconnexion</button>
+            <div>
+                <a class="profile-btn" href="#/profile">Profil</a>
+                <button onclick={disconnect}>Déconnexion</button>
+            </div>
         {:else}
             <a href="#/">Connexion</a>
         {/if}
