@@ -1,3 +1,8 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
 :root {
     font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
     line-height: 1.5;
@@ -11,6 +16,11 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    --borderRadius: 8px;
+    --slatedark: #1a1a1a;
+    --softwhite: #f1f1f1;
+    --blue: #007bff;
+    --darkerblue: #0056b3;
 }
 
 a {
@@ -25,7 +35,7 @@ a:hover {
 body {
     margin: 0;
     display: flex;
-    place-items: center;
+    /* place-items: center; */
     min-width: 320px;
     min-height: 100vh;
 }
@@ -33,10 +43,11 @@ body {
 h1 {
     font-size: 3.2em;
     line-height: 1.1;
+    margin-bottom: 20px;
 }
 
 .card {
-    padding: 2em;
+    text-align: center;
 }
 
 #app {
@@ -46,24 +57,25 @@ h1 {
     text-align: center;
 }
 
-button {
+button,
+.profile-btn {
     border-radius: 8px;
     border: 1px solid transparent;
     padding: 0.6em 1.2em;
     font-size: 1em;
     font-weight: 500;
     font-family: inherit;
-    background-color: #1a1a1a;
+    background-color: var(--slatedark);
     cursor: pointer;
     transition: border-color 0.25s;
 }
-button:hover {
-    border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-    outline: 4px auto -webkit-focus-ring-color;
-}
+/* button:hover { */
+/*     border-color: #646cff; */
+/* } */
+/* button:focus, */
+/* button:focus-visible { */
+/*     outline: 4px auto -webkit-focus-ring-color; */
+/* } */
 
 @media (prefers-color-scheme: light) {
     :root {
@@ -75,5 +87,188 @@ button:focus-visible {
     }
     button {
         background-color: #f9f9f9;
+    }
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: start;
+}
+
+ul li {
+    margin: 20px 0;
+}
+
+form {
+    display: grid;
+    background-color: var(--softwhite);
+    padding: 40px;
+    border-radius: 8px;
+    color: black;
+    gap: 8px;
+    text-align: start;
+    margin: 20px 0;
+}
+
+form input {
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.errorMessage {
+    color: rgb(218, 0, 0);
+}
+
+header ul {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    list-style: none;
+}
+
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.calendar-modal {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.calendar-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--slatedark);
+}
+
+.days-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-weight: bold;
+    color: #777;
+    margin-bottom: 5px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.calendar-grid .day-btn {
+    background: none;
+    border: 1px solid #cecece;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    color: var(--slatedark);
+}
+
+.calendar-grid .day-btn:hover {
+    background: var(--blue);
+    color: var(--softwhite);
+}
+
+.confirm-btn {
+    background: var(--blue);
+    color: var(--softwhite);
+}
+
+.confirm-btn:hover {
+    background: var(--blue);
+    color: var(--softwhite);
+    border: 1px solid var(--blue) !important;
+}
+
+.salle-details p {
+    margin: 5px 0;
+    font-size: 1rem;
+    color: #333;
+}
+
+.creneaux {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #cecece;
+}
+
+.creneaux h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.creneaux label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    cursor: pointer;
+}
+
+.day-btn.selected {
+    background: var(--blue);
+    color: var(--softwhite);
+    font-weight: bold;
+}
+
+.day-btn.today {
+    background: #cecece;
+    font-weight: bold;
+}
+
+.empty-day {
+    padding: 5px;
+}
+
+.nav-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.close-btn {
+    margin-top: 10px;
+    padding: 10px;
+    background: #f4f4f4;
+    cursor: pointer;
+    border-radius: 4px;
+    flex: auto;
+    color: var(--slatedark);
+}
+
+.close-btn:hover {
+    border: 1px solid red;
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+        color: #213547;
     }
 }

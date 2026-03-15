@@ -7,9 +7,11 @@
     import ReservationController from '../controllers/reservation.controller';
 
     import DatePicker from '../components/DatePicker.svelte';
+    import AuthController from '../controllers/auth.controller';
 
     const salleController = new SalleController();
     const reservationController = new ReservationController();
+    const authController = new AuthController();
 
     let salles = $state<SalleWithReservations[]>([]);
 
@@ -17,7 +19,7 @@
     let computers = $state(0);
     let teacherComputer = $state<boolean>(false);
     let airCool = $state<boolean>(false);
-    let selected = $state<string | null>();
+    let selectedDate = $state<string | null>();
 
     let displayed = $derived(
         salles.filter(
@@ -26,7 +28,7 @@
                 salle.computers >= computers &&
                 (!teacherComputer || (teacherComputer && salle.teacherComputer)) &&
                 (!airCool || (airCool && salle.aircool)) &&
-                !salle.reservations.some((r: Reservation) => r.date === selected)
+                !salle.reservations.some((r: Reservation) => r.date === selectedDate)
         )
     );
 
@@ -46,6 +48,21 @@
             }
         });
     });
+
+    function reserver(s: SalleWithReservations) {
+        const resAuth = authController.getConnexion();
+        let userId = '';
+        if (resAuth.success) {
+            userId = resAuth.data.id;
+        }
+        if (selectedDate && userId) {
+            reservationController.save({
+                date: selectedDate,
+                userId: userId,
+                salleId: s.id,
+            });
+        }
+    }
 </script>
 
 <h1>Réserver une salle</h1>
@@ -86,17 +103,112 @@
 
         <fieldset>
             <legend>Date</legend>
-            <DatePicker bind:selected />
+            <DatePicker bind:selected={selectedDate} />
         </fieldset>
     </div>
 </section>
 
-<section>
-    <h2>Salles ({displayed.length})</h2>
-    {#each displayed as s}
-        <p>{s.name}</p>
-    {/each}
-</section>
+<div class="salles-container">
+    <h2>Salles disponibles</h2>
+    {#if displayed.length > 0}
+        <ul>
+            {#each displayed as salle}
+                <li>
+                    <span>
+                        <strong>{salle.name}</strong>
+                        ({salle.capacity} places)
+                        <span id="tag"
+                            >{salle.capacity >= 100
+                                ? 'Amphi'
+                                : salle.computers > 0
+                                  ? 'Informatique'
+                                  : 'Classique'}</span
+                        >
+                        {#if salle.aircool}
+                            <span id="tag">Clim</span>
+                        {/if}
+                    </span>
+                    <button type="button" on:click={() => reserver(salle)} title="Réserver la salle"
+                        >Réserver la salle</button
+                    >
+                </li>
+            {/each}
+        </ul>
+    {:else}
+        <p>Aucune salle correspondante aux critères de recherche n'est disponible.</p>
+    {/if}
+</div>
 
 <style>
+    .dashboard-contenu {
+        display: flex;
+        gap: 16px;
+        margin: 20px 0;
+    }
+
+    .dashboard-contenu button {
+        background-color: var(--softwhite);
+        color: var(--slatedark);
+    }
+
+    .calendar {
+        padding: 24px;
+        background-color: var(--slatedark);
+        border-radius: var(--borderRadius);
+    }
+
+    .salles-container {
+        width: 100%;
+        padding: 40px;
+        background-color: var(--slatedark);
+        border-radius: var(--borderRadius);
+    }
+
+    .salles-container li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .filters-bar {
+        background: var(--slatedark);
+        padding: 15px;
+        border-radius: var(--borderRadius);
+        display: flex;
+        gap: 20px;
+        margin-bottom: 20px;
+        align-items: center;
+        flex-wrap: wrap;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .filter-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+        font-size: 0.95rem;
+    }
+
+    .filter-group input,
+    .filter-group select {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .filter-group input[type='checkbox'] {
+        width: 20px;
+        height: 20px;
+        vertical-align: middle;
+    }
+
+    #tag {
+        padding: 4px 8px;
+        font-size: 12px;
+        border-radius: 32px;
+        background-color: var(--softwhite);
+        color: var(--slatedark);
+    }
 </style>
