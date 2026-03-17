@@ -2,17 +2,6 @@
     import ManageSalles from '../components/ManageSalles.svelte';
 
     let visibility = $state<'user' | 'salle' | 'reservation' | 'en cours'>('salle');
-
-    // function loadSalles() {
-    //     const response = salleController.find();
-    //     if (response.success && response.data) {
-    //         sallesDispos = response.data;
-    //     }
-    // }
-    //
-    // onMount(() => {
-    //     loadSalles();
-    // });
 </script>
 
 <h1>Dashboard</h1>
