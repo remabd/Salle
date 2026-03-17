@@ -1,34 +1,32 @@
 <script lang="ts">
-    import { onMount, createEventDispatcher } from 'svelte';
+    import { onMount } from 'svelte';
     import SalleController from '../controllers/salle.controller';
     import type { Salle, CreateSalleDto } from '../models/salle.entity';
 
-    const dispatch = createEventDispatcher();
     const salleController = new SalleController();
 
-    let salles: Salle[] = [];
-    let errorMessage = '';
+    let salles: Salle[] = $state<Salle[]>([]);
+    let errorMessage = $state<string>('');
 
-    // Formulaire pour ajouter une salle
-    let name = '';
-    let capacity = 30;
-    let computers = 0;
-    let teacherComputer = true;
-    let aircool = false;
+    let name = $state<string>('');
+    let capacity = $state<number>(30);
+    let computers = $state<number>(0);
+    let teacherComputer = $state<boolean>(false);
+    let aircool = $state<boolean>(false);
 
     function refreshSalles() {
         const response = salleController.find();
-        if (response.success && response.data) {
+        if (response.success) {
             salles = response.data;
         }
-        dispatch('update');
     }
 
     onMount(() => {
         refreshSalles();
     });
 
-    function addSalle() {
+    function addSalle(e: SubmitEvent) {
+        e.preventDefault();
         errorMessage = '';
         if (!name.trim()) {
             errorMessage = 'Le nom de la salle est requis.';
@@ -46,7 +44,6 @@
         const response = salleController.save(newSalle);
         if (response.success) {
             refreshSalles();
-            // Reset form
             name = '';
             capacity = 30;
             computers = 0;
@@ -76,7 +73,7 @@
         <div class="errorMessage">{errorMessage}</div>
     {/if}
 
-    <form on:submit|preventDefault={addSalle} class="add-form">
+    <form onsubmit={addSalle} class="add-form">
         <div class="form-group">
             <label for="name">Nom de la salle</label>
             <input type="text" id="name" bind:value={name} placeholder="Ex: Salle 101" required />
@@ -123,7 +120,7 @@
                                     : ''}{salle.aircool ? ', clim' : ''})
                             </span>
                         </div>
-                        <button class="btn-delete" on:click={() => removeSalle(salle.id)}
+                        <button class="btn-delete" onclick={() => removeSalle(salle.id)}
                             >Supprimer</button
                         >
                     </li>
