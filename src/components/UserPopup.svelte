@@ -1,8 +1,6 @@
 <script lang="ts">
-    import UserController from '../controllers/user.controller';
-    import type { CreateUserDto, User } from '../models/user.entity';
+    import type { CreateUserDto } from '../models/user.entity';
 
-    const userController = new UserController();
     interface Props {
         userDto: CreateUserDto;
         errorMessage: string;
