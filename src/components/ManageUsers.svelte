@@ -89,13 +89,31 @@
 
     <div>
         {#if users.length}
-            <ul>
-                {#each users as user}
-                    <li>
-                        <UserCard {user} />
-                    </li>
-                {/each}
-            </ul>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Prénom</th>
+                        <th>Nom</th>
+                        <th>Email</th>
+                        <th>Administrateur</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {#each users as user}
+                        <tr>
+                            <th>{user.firstName}</th>
+                            <th>{user.lastName}</th>
+                            <th>{user.email}</th>
+                            <th>{user.admin ? 'OUI' : 'NON'}</th>
+                            <th>
+                                <button>Modifier</button>
+                                <button>Supprimer</button>
+                            </th>
+                        </tr>
+                    {/each}
+                </tbody>
+            </table>
         {:else}
             <p>Pas d'utilisateurs</p>
         {/if}

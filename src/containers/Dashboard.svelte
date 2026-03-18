@@ -1,5 +1,6 @@
 <script lang="ts">
     import ManageSalles from '../components/ManageSalles.svelte';
+    import ManageUsers from '../components/ManageUsers.svelte';
 
     let visibility = $state<'user' | 'salle' | 'reservation' | 'en cours'>('salle');
 </script>
@@ -15,6 +16,8 @@
 
 {#if visibility === 'salle'}
     <ManageSalles />
-{:else if visibility === 'user'}{:else}
+{:else if visibility === 'user'}
+    <ManageUsers />
+{:else}
     <p>Rien à afficher</p>
 {/if}
