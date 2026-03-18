@@ -64,6 +64,13 @@ export default class UserController {
     }
 
     update(id: string, updateUserDto: UpdateUserDto): Response {
+        const conflict = this.userRepository.findOneByEmail(updateUserDto.email);
+        if (conflict) {
+            return {
+                success: false,
+                error: { message: 'Un utilisateur existe déja à cet email' },
+            };
+        }
         const exist = this.userRepository.findOneById(id);
         if (!exist) {
             return {
