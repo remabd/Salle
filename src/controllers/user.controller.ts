@@ -23,7 +23,7 @@ export default class UserController {
         if (!user) {
             return {
                 success: false,
-                error: { message: 'User introuvable' },
+                error: { message: 'Utilisateur introuvable' },
             };
         }
         return {
@@ -37,7 +37,7 @@ export default class UserController {
         if (exist) {
             return {
                 success: false,
-                error: { message: 'Une user existe déja à cet email' },
+                error: { message: 'Un utilisateur existe déja à cet email' },
             };
         }
         const user: User = { ...createUserDto, id: uuid() };
@@ -53,7 +53,7 @@ export default class UserController {
         if (!exist) {
             return {
                 success: false,
-                error: { message: 'User introuvable' },
+                error: { message: 'Utilisateur introuvable' },
             };
         }
         this.userRepository.remove(id);
@@ -68,7 +68,7 @@ export default class UserController {
         if (!exist) {
             return {
                 success: false,
-                error: { message: 'User introuvable' },
+                error: { message: 'Utilisateur introuvable' },
             };
         }
         this.userRepository.update(id, updateUserDto);
