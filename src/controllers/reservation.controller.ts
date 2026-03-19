@@ -22,6 +22,17 @@ export default class ReservationController {
         };
     }
 
+    findToday(): Response<Reservation[]> {
+        const now = new Date();
+        const today = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+        const reservations = this.reservationRepository.find();
+        reservations.filter((r: Reservation) => r.date.slice(0, r.date.lastIndexOf('-')) === today);
+        return {
+            success: true,
+            data: reservations,
+        };
+    }
+
     findBySalleId(id: string): Response<Reservation[]> {
         const reservations = this.reservationRepository.findBySalleId(id);
         return {

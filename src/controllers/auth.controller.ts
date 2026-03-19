@@ -16,7 +16,7 @@ export default class AuthController {
     }
 
     public async login(loginDto: LoginDto): Promise<Response<User>> {
-        const user = this.userRepository.getUserByEmail(loginDto.email);
+        const user = this.userRepository.findOneByEmail(loginDto.email);
         if (!user) {
             return {
                 success: false,
@@ -63,7 +63,7 @@ export default class AuthController {
     }
 
     public async register(createUserDto: CreateUserDto): Promise<Response> {
-        const exist = this.userRepository.getUserByEmail(createUserDto.email);
+        const exist = this.userRepository.findOneByEmail(createUserDto.email);
         if (exist) {
             return {
                 success: false,
@@ -72,7 +72,7 @@ export default class AuthController {
         }
         const hash = await bcrypt.hash(createUserDto.password, this.SALT);
         createUserDto.password = hash;
-        this.userRepository.addUser(createUserDto);
+        this.userRepository.save(createUserDto);
         return {
             success: true,
             data: null,

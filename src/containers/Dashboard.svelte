@@ -1,25 +1,26 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
-    import SalleController from '../controllers/salle.controller';
-    import type { Salle } from '../models/salle.entity';
+    import ManageReservations from '../components/ManageReservations.svelte';
     import ManageSalles from '../components/ManageSalles.svelte';
+    import ManageUsers from '../components/ManageUsers.svelte';
 
-    const salleController = new SalleController();
-
-    let sallesDispos: Salle[] = [];
-
-    function loadSalles() {
-        const response = salleController.find();
-        if (response.success && response.data) {
-            sallesDispos = response.data;
-        }
-    }
-
-    onMount(() => {
-        loadSalles();
-    });
+    let visibility = $state<'user' | 'salle' | 'reservation' | 'en cours'>('salle');
 </script>
 
 <h1>Dashboard</h1>
 
-<ManageSalles on:update={loadSalles} />
+<fieldset>
+    <button onclick={() => (visibility = 'user')}>Utilisateurs</button>
+    <button onclick={() => (visibility = 'salle')}>Salles</button>
+    <button onclick={() => (visibility = 'reservation')}>Réservations</button>
+    <button onclick={() => (visibility = 'en cours')}>En cours</button>
+</fieldset>
+
+{#if visibility === 'salle'}
+    <ManageSalles />
+{:else if visibility === 'user'}
+    <ManageUsers />
+{:else if visibility === 'reservation'}
+    <ManageReservations />
+{:else}
+    <p>Rien à afficher</p>
+{/if}
