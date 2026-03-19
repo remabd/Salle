@@ -459,6 +459,10 @@ fieldset {
     border: none;
 }
 
+th, td {
+    padding: 20px;
+}
+
 @media (prefers-color-scheme: light) {
     :root {
         color: #213547;

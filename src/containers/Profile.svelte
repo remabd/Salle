@@ -8,7 +8,7 @@
     
     let userFirstName = $state<string>("");
     let userLastName = $state<string>("");
-    let userReservations = $state<Reservation[]>([]); // Récupérer state
+    let userReservations = $state<Reservation[]>([]);
     const reservationController = new ReservationController();
 
     onMount(( )=> {
@@ -22,7 +22,6 @@
                 userFirstName = resUser.data.firstName;
                 userLastName = resUser.data.lastName;
             }
-            // Récupérer les reservations de l'user
             const resData = reservationController.findByUserId(response.data.id);
             if (resData.success) {
                 userReservations = resData.data;
@@ -39,10 +38,10 @@
     }
 
     function annulerReservation(reservation: Reservation) {
-        if(confirm(`Voulez-vous vraiment annuler votre réservation du ${reservation.date} pour la salle ${reservation.salleId} ?`)) {
+        if(confirm(`Voulez-vous vraiment annuler votre réservation du ${reservation.date} pour la salle ${getSalleName(reservation.salleId)} ?`)) {
             const response = reservationController.remove(reservation.id);
             if(response.success) {
-                userReservations = userReservations.filter(r => r.id !== reservation.id); //Mettre a jour la liste des reservations
+                userReservations = userReservations.filter(r => r.id !== reservation.id);
             } else {
                 alert(response.error?.message || "Erreur")
             }
@@ -66,7 +65,6 @@
     }
 </script>
 
-<!-- Changer userEmail par userFirstName -->
 <h1>Profil de {userFirstName} {userLastName}</h1> 
 
 <div>
@@ -77,7 +75,6 @@
         <table>
             <thead>
                 <tr>
-                    <!-- <th scope="col">Utilisateur</th> -->
                     <th scope="col">Salle</th>
                     <th scope="col">Date</th>
                     <th scope="col">Créneau</th>
@@ -113,10 +110,6 @@
         border-radius: var(--borderRadius);
         padding: 24px;
         width: 100%;
-    }
-
-    th, td {
-        padding: 20px;
     }
 
     tbody tr {
