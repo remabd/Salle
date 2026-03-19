@@ -53,8 +53,6 @@
         return result;
     });
 
-    $inspect(disabled, reservationDto);
-
     onMount(() => {
         const resUsers = userController.find();
         if (resUsers.success) {

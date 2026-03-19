@@ -55,7 +55,6 @@
     function getSalleName(id: string): string {
         const salleController = new SalleController();
         const res = salleController.findOneById(id);
-        console.log(res, id);
         if (res.success) {
             return res.data.name;
         } else {
