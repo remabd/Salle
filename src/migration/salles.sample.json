@@ -1,0 +1,18 @@
+[
+    {
+        "id": 1,
+        "name": "Salle Classique",
+        "capacity": 30,
+        "computers": 0,
+        "teacherComputer": 1,
+        "aircool": false
+    },
+    {
+        "id": 2,
+        "name": "Salle Info",
+        "capacity": 25,
+        "computers": 15,
+        "teacherComputer": 1,
+        "aircool": true
+    }
+]

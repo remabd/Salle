@@ -19,16 +19,18 @@ export default class AuthController {
         const user = this.userRepository.findOneByEmail(loginDto.email);
         if (!user) {
             return {
-                success: false,
-                error: { message: 'indentifiants incorrects' },
+                status: Status.UNAUTHORIZED,
+                message: 'Identifiants incorrects',
+                data: null,
             };
         }
 
         const valid = await bcrypt.compare(loginDto.password, user.password);
         if (!valid) {
             return {
-                success: false,
-                error: { message: 'indentifiants incorrects' },
+                status: Status.UNAUTHORIZED,
+                message: 'Identifiants incorrects',
+                data: null,
             };
         }
 
