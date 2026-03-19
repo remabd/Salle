@@ -3,8 +3,10 @@
     import UserController from '../controllers/user.controller';
     import type { CreateUserDto, UpdateUserDto, User } from '../models/user.entity';
     import UserPopup from './UserPopup.svelte';
+    import ValidationGuard from '../guards/validation.guard';
 
     const userController = new UserController();
+    const validationGuard = new ValidationGuard();
 
     let users = $state<User[]>([]);
     let errorMessage = $state<string>('');
@@ -40,42 +42,50 @@
     }
 
     function addUser(user: CreateUserDto) {
-        const response = userController.save(user);
-        if (response.success) {
-            errorMessage = 'Utilisateur enregistré';
-            isVisible = false;
-            userDto = {
-                firstName: '',
-                lastName: '',
-                email: '',
-                password: '',
-                admin: false,
-            };
-            mode = 'create';
-            id = '';
-            refreshUsers();
+        if (!validationGuard.validateUserDto(user)) {
+            errorMessage = 'Erreur de saisie';
         } else {
-            errorMessage = response.error.message;
+            const response = userController.save(user);
+            if (response.success) {
+                errorMessage = 'Utilisateur enregistré';
+                isVisible = false;
+                userDto = {
+                    firstName: '',
+                    lastName: '',
+                    email: '',
+                    password: '',
+                    admin: false,
+                };
+                mode = 'create';
+                id = '';
+                refreshUsers();
+            } else {
+                errorMessage = response.error.message;
+            }
         }
     }
 
     function updateUser(id: string, user: UpdateUserDto) {
-        const response = userController.update(id, user);
-        if (response.success) {
-            errorMessage = 'Utilisateur modifié';
-            isVisible = false;
-            userDto = {
-                firstName: '',
-                lastName: '',
-                email: '',
-                password: '',
-                admin: false,
-            };
-            mode = 'create';
-            id = '';
-            refreshUsers();
+        if (!validationGuard.validateUserDto(user)) {
+            errorMessage = 'Erreur de saisie';
         } else {
-            errorMessage = response.error.message;
+            const response = userController.update(id, user);
+            if (response.success) {
+                errorMessage = 'Utilisateur modifié';
+                isVisible = false;
+                userDto = {
+                    firstName: '',
+                    lastName: '',
+                    email: '',
+                    password: '',
+                    admin: false,
+                };
+                mode = 'create';
+                id = '';
+                refreshUsers();
+            } else {
+                errorMessage = response.error.message;
+            }
         }
     }
 
