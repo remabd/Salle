@@ -40,11 +40,11 @@
             <div class="creneaux">
                 <h4>Créneau pour le {selectedDate}</h4>
                 <label>
-                    <input type="radio" name="creneau" bind:group={creneau} value="matin" />
+                    <input type="radio" name="creneau" bind:group={creneau} value="Matinée" />
                     Matinée - 4h (08h00 - 12h00)
                 </label>
                 <label>
-                    <input type="radio" name="creneau" bind:group={creneau} value="apres-midi" />
+                    <input type="radio" name="creneau" bind:group={creneau} value="Après-Midi" />
                     Après-midi - 4h (13h00 - 17h00)
                 </label>
             </div>

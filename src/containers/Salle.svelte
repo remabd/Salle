@@ -5,8 +5,12 @@
     import ManageSalles from '../components/ManageSalles.svelte';
     import CalendarPopup from '../components/CalendarPopup.svelte';
     import ReservationPopup from '../components/ReservationPopup.svelte';
+    import ReservationController from '../controllers/reservation.controller';
+    import AuthController from '../controllers/auth.controller';
 
     const salleController = new SalleController();
+    const reservationController = new ReservationController();
+    const authController = new AuthController();
     
     let sallesDispos: Salle[] = [];
 
@@ -50,8 +54,19 @@
     }
 
     function handleReservationConfirm(event: CustomEvent<{salle: Salle, date: string, creneau: string}>) {
-        console.log("Reservation confirmée :", event.detail);
-        // enregistrer la réservation ?
+        const session = authController.getConnexion();
+        if(session.success && session.data) {
+            reservationController.save({
+                userId: session.data.id,
+                salleId: event.detail.salle.id,
+                salleName: event.detail.salle.name,
+                date: event.detail.date,
+                creneau: event.detail.creneau
+            });
+            alert("Reservation Confirmée");
+        } else {
+            alert("Veuillez vous connecter");
+        }
     }
 
     function openCalendar() {
