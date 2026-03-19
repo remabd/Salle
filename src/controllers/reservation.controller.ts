@@ -1,8 +1,4 @@
-import type {
-    CreateReservationDto,
-    Reservation,
-    UpdateReservationDto,
-} from '../models/reservation.entity';
+import type { ReservationDto, Reservation } from '../models/reservation.entity';
 import ReservationRepository from '../repository/reservation.repository';
 import type { Response } from '../models/response.entity';
 import { v4 as uuid } from 'uuid';
@@ -63,8 +59,8 @@ export default class ReservationController {
         };
     }
 
-    save(createReservationDto: CreateReservationDto): Response {
-        const reservation: Reservation = { ...createReservationDto, id: uuid() };
+    save(reservationDto: ReservationDto): Response {
+        const reservation: Reservation = { ...reservationDto, id: uuid() };
         this.reservationRepository.save(reservation);
         return {
             success: true,
@@ -87,7 +83,7 @@ export default class ReservationController {
         };
     }
 
-    update(id: string, updateReservationDto: UpdateReservationDto): Response {
+    update(id: string, reservationDto: ReservationDto): Response {
         const exist = this.reservationRepository.findOneById(id);
         if (!exist) {
             return {
@@ -95,7 +91,7 @@ export default class ReservationController {
                 error: { message: 'Reservation introuvable' },
             };
         }
-        this.reservationRepository.update({ ...updateReservationDto, id: id });
+        this.reservationRepository.update({ ...reservationDto, id: id });
         return {
             success: true,
             data: null,

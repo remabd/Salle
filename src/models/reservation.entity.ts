@@ -5,5 +5,4 @@ export interface Reservation {
     date: string;
 }
 
-export type CreateReservationDto = Omit<Reservation, 'id'>;
-export type UpdateReservationDto = CreateReservationDto;
+export type ReservationDto = Omit<Reservation, 'id'>;

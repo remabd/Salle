@@ -7,8 +7,7 @@ export interface User {
     admin: boolean;
 }
 
-export type CreateUserDto = Omit<User, 'id'>;
-export type UpdateUserDto = CreateUserDto;
+export type UserDto = Omit<User, 'id'>;
 
 export type UserHead = Pick<User, 'id' | 'email' | 'admin'>;
 

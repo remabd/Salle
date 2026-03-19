@@ -1,58 +1,104 @@
 <script lang="ts">
-    import { createEventDispatcher } from 'svelte';
+    import { onMount } from 'svelte';
+    import SalleController from '../controllers/salle.controller';
+    import UserController from '../controllers/user.controller';
+    import type { Reservation, ReservationDto } from '../models/reservation.entity';
     import type { Salle } from '../models/salle.entity';
+    import type { User } from '../models/user.entity';
+    import DatePicker from './DatePicker.svelte';
+    import ReservationController from '../controllers/reservation.controller';
 
-    const dispatch = createEventDispatcher();
+    interface Props {
+        reservationDto: ReservationDto;
+        errorMessage: string;
+        mode: 'create' | 'update';
+        isVisible: boolean;
+        onSave: () => void;
+    }
+    const newReservationDto = {
+        userId: '',
+        salleId: '',
+        date: '',
+    };
 
-    export let show = false;
-    export let salle: Salle | null = null;
-    export let selectedDate = '';
+    let {
+        reservationDto = $bindable(newReservationDto),
+        errorMessage = $bindable(''),
+        mode = 'create',
+        isVisible = $bindable(true),
+        onSave,
+    }: Props = $props();
 
-    let creneau = '';
+    const userController = new UserController();
+    const salleController = new SalleController();
+    const reservationController = new ReservationController();
 
-    function close() {
-        dispatch('close');
+    let salles = $state<Salle[]>([]);
+    let users = $state<User[]>([]);
+
+    let disabled = $derived.by(() => {
+        const res = reservationController.findBySalleId(reservationDto.salleId);
+        if (res.success) {
+            const result: string[] = [];
+            res.data.forEach((reservation: Reservation) => {
+                result.push(reservation.date);
+            });
+            return result;
+        } else {
+            return [];
+        }
+    });
+
+    $inspect(disabled);
+
+    onMount(() => {
+        const resUsers = userController.find();
+        if (resUsers.success) {
+            users = resUsers.data;
+        }
+        const resSalles = salleController.find();
+        if (resSalles.success) {
+            salles = resSalles.data;
+        }
+    });
+
+    function handleSubmit(e: SubmitEvent) {
+        e.preventDefault();
+        onSave();
     }
 
-    function confirm() {
-        dispatch('confirm', { salle, date: selectedDate, creneau });
-        close();
+    function close() {
+        isVisible = false;
     }
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-{#if show && salle}
-    <div class="modal-backdrop" on:click={close}>
-        <div class="calendar-modal" on:click|stopPropagation>
-            <div class="calendar-header">
-                <h3>{salle.name}</h3>
-                <button class="nav-btn" on:click={close}>X</button>
-            </div>
-            
-            <div class="salle-details">
-                <p><strong>Type :</strong> {salle.capacity >= 100 ? "Amphi" : (salle.computers > 0 ? "Informatique" : "Classique")}</p>
-                <p><strong>Places :</strong> {salle.capacity}</p>
-                <p><strong>Ordinateurs :</strong> {salle.computers}</p>
-                <p><strong>Bureau prof :</strong> {salle.teacherComputer ? "Oui" : "Non"}</p>
-                <p><strong>Climatisation :</strong> {salle.aircool ? "Oui" : "Non"}</p>
-            </div>
-
-            <div class="creneaux">
-                <h4>Créneau pour le {selectedDate}</h4>
-                <label>
-                    <input type="radio" name="creneau" bind:group={creneau} value="Matinée" />
-                    Matinée - 4h (08h00 - 12h00)
-                </label>
-                <label>
-                    <input type="radio" name="creneau" bind:group={creneau} value="Après-Midi" />
-                    Après-midi - 4h (13h00 - 17h00)
-                </label>
-            </div>
-            
-            <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <button class="close-btn" on:click={close}>Annuler</button>
-                <button class="close-btn confirm-btn" on:click={confirm}>Confirmer</button>
-            </div>
-        </div>
+<div class="modal">
+    <div class="row">
+        <h3>Ajouter une salle</h3>
+        <button onclick={close}>X</button>
     </div>
-{/if}
+    {#if errorMessage}
+        <p>{errorMessage}</p>
+    {/if}
+    <form onsubmit={handleSubmit} class="add-form">
+        <div>
+            <select name="user" bind:value={reservationDto.userId}>
+                {#each users as user}
+                    <option value={user.id}>{user.firstName + ' ' + user.lastName}</option>
+                {/each}
+            </select>
+        </div>
+
+        <div>
+            <select name="salle" bind:value={reservationDto.salleId}>
+                {#each salles as salle}
+                    <option value={salle.id}>{salle.name}</option>
+                {/each}
+            </select>
+        </div>
+
+        <DatePicker bind:selected={reservationDto.date} bind:disabled />
+
+        <button type="submit">{mode === 'create' ? 'Ajouter' : 'Modifier'} la réservation</button>
+    </form>
+</div>
