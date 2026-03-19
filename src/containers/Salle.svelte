@@ -8,12 +8,10 @@
 
     import DatePicker from '../components/DatePicker.svelte';
     import AuthController from '../controllers/auth.controller';
-    import UserController from '../controllers/user.controller';
 
     const salleController = new SalleController();
     const reservationController = new ReservationController();
     const authController = new AuthController();
-    const userController = new UserController();
 
     let salles = $state<SalleWithReservations[]>([]);
 
