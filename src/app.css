@@ -10,17 +10,19 @@
 
     color-scheme: light dark;
     color: rgba(255, 255, 255, 0.87);
-    background-color: #242424;
+    background-color: var(--bgColor);
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     --borderRadius: 8px;
+    --bgColor: #242424;
     --slatedark: #1a1a1a;
     --softwhite: #f1f1f1;
     --blue: #007bff;
     --darkerblue: #0056b3;
+    --red: #da1a1a;
 }
 
 a {
@@ -446,6 +448,15 @@ header ul {
 
 .close-btn:hover {
     border: 1px solid red;
+}
+
+#footer-p {
+    margin-top: 20px;
+}
+
+fieldset {
+    padding: 16px 0;
+    border: none;
 }
 
 @media (prefers-color-scheme: light) {
