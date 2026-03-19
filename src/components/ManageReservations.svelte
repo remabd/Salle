@@ -126,15 +126,14 @@
 </script>
 
 <section>
-    <h2>Gestion des réservations</h2>
-
-    {#if isVisible}
-        <ReservationPopup bind:reservationDto bind:errorMessage bind:isVisible {mode} {onSave} />
-    {/if}
-
-    <p>{errorMessage ? errorMessage : null}</p>
-
-    <button onclick={openPopup}>Ajouter</button>
+    <div>
+        <h2>Gestion des réservations</h2>
+        {#if isVisible}
+            <ReservationPopup bind:reservationDto bind:errorMessage bind:isVisible {mode} {onSave} />
+        {/if}
+        <p>{errorMessage ? errorMessage : null}</p>
+        <button class="btn-add" onclick={openPopup}>Ajouter</button>
+    </div>
 
     <div>
         {#if reservations.length}
@@ -166,3 +165,12 @@
         {/if}
     </div>
 </section>
+
+<style>
+    div:first-child {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 20px 0;
+    }
+</style>

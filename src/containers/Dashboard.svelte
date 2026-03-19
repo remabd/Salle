@@ -6,14 +6,16 @@
     let visibility = $state<'user' | 'salle' | 'reservation' | 'en cours'>('salle');
 </script>
 
-<h1>Dashboard</h1>
+<h1>Tableau de bord</h1>
 
-<fieldset>
-    <button onclick={() => (visibility = 'user')}>Utilisateurs</button>
-    <button onclick={() => (visibility = 'salle')}>Salles</button>
-    <button onclick={() => (visibility = 'reservation')}>Réservations</button>
-    <button onclick={() => (visibility = 'en cours')}>En cours</button>
-</fieldset>
+<div>
+    <fieldset>
+        <button onclick={() => (visibility = 'user')}>Utilisateurs</button>
+        <button onclick={() => (visibility = 'salle')}>Salles</button>
+        <button onclick={() => (visibility = 'reservation')}>Réservations</button>
+        <button onclick={() => (visibility = 'en cours')}>En cours</button>
+    </fieldset>
+</div>
 
 {#if visibility === 'salle'}
     <ManageSalles />
@@ -24,3 +26,4 @@
 {:else}
     <p>Rien à afficher</p>
 {/if}
+

@@ -5,17 +5,10 @@
     import type { Reservation } from '../models/reservation.entity';
     import SalleController from '../controllers/salle.controller';
     import UserController from '../controllers/user.controller';
-<<<<<<< HEAD
     
     let userFirstName = $state<string>("");
     let userLastName = $state<string>("");
     let userReservations = $state<Reservation[]>([]);
-=======
-
-    let userFirstName = $state<string>('');
-    let userLastName = $state<string>('');
-    let userReservations = $state<Reservation[]>([]); // Récupérer state
->>>>>>> main
     const reservationController = new ReservationController();
 
     onMount(() => {
@@ -71,11 +64,7 @@
     }
 </script>
 
-<<<<<<< HEAD
 <h1>Profil de {userFirstName} {userLastName}</h1> 
-=======
-<h1>Profil de {userFirstName} {userLastName}</h1>
->>>>>>> main
 
 <div>
     <h2>Mes réservations</h2>
@@ -128,14 +117,6 @@
         width: 100%;
     }
 
-<<<<<<< HEAD
-=======
-    th,
-    td {
-        padding: 20px;
-    }
-
->>>>>>> main
     tbody tr {
         border-top: 2px solid var(--bgColor);
     }

@@ -129,7 +129,7 @@
                             <span id="tag">Clim</span>
                         {/if}
                     </span>
-                    <button type="button" on:click={() => reserver(salle)} title="Réserver la salle"
+                    <button type="button" onclick={() => reserver(salle)} title="Réserver la salle"
                         >Réserver la salle</button
                     >
                 </li>
@@ -141,23 +141,6 @@
 </div>
 
 <style>
-    .dashboard-contenu {
-        display: flex;
-        gap: 16px;
-        margin: 20px 0;
-    }
-
-    .dashboard-contenu button {
-        background-color: var(--softwhite);
-        color: var(--slatedark);
-    }
-
-    .calendar {
-        padding: 24px;
-        background-color: var(--slatedark);
-        border-radius: var(--borderRadius);
-    }
-
     .salles-container {
         width: 100%;
         padding: 40px;
@@ -170,39 +153,6 @@
         justify-content: space-between;
         align-items: center;
         gap: 20px;
-    }
-
-    .filters-bar {
-        background: var(--slatedark);
-        padding: 15px;
-        border-radius: var(--borderRadius);
-        display: flex;
-        gap: 20px;
-        margin-bottom: 20px;
-        align-items: center;
-        flex-wrap: wrap;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    }
-
-    .filter-group {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-weight: 500;
-        font-size: 0.95rem;
-    }
-
-    .filter-group input,
-    .filter-group select {
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
-
-    .filter-group input[type='checkbox'] {
-        width: 20px;
-        height: 20px;
-        vertical-align: middle;
     }
 
     #tag {
