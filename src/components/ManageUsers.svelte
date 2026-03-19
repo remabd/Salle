@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import UserController from '../controllers/user.controller';
-    import type { CreateUserDto, UpdateUserDto, User } from '../models/user.entity';
+    import type { User, UserDto } from '../models/user.entity';
     import UserPopup from './UserPopup.svelte';
     import ValidationGuard from '../guards/validation.guard';
 
@@ -13,7 +13,7 @@
     let isVisible = $state<boolean>(false);
 
     let mode = $state<'create' | 'update'>('create');
-    let userDto = $state<CreateUserDto>({
+    let userDto = $state<UserDto>({
         firstName: '',
         lastName: '',
         email: '',
@@ -41,7 +41,7 @@
         }
     }
 
-    function addUser(user: CreateUserDto) {
+    function addUser(user: UserDto) {
         if (!validationGuard.validateUserDto(user)) {
             errorMessage = 'Erreur de saisie';
         } else {
@@ -65,7 +65,7 @@
         }
     }
 
-    function updateUser(id: string, user: UpdateUserDto) {
+    function updateUser(id: string, user: UserDto) {
         if (!validationGuard.validateUserDto(user)) {
             errorMessage = 'Erreur de saisie';
         } else {
@@ -135,14 +135,14 @@
                 <tbody>
                     {#each users as user}
                         <tr>
-                            <th scope="row">{user.firstName}</th>
-                            <th>{user.lastName}</th>
-                            <th>{user.email}</th>
-                            <th>{user.admin ? 'OUI' : 'NON'}</th>
-                            <th>
+                            <td>{user.firstName}</td>
+                            <td>{user.lastName}</td>
+                            <td>{user.email}</td>
+                            <td>{user.admin ? 'OUI' : 'NON'}</td>
+                            <td>
                                 <button onclick={() => openUpdatePopup(user)}>Modifier</button>
                                 <button onclick={() => deleteUser(user.id)}>Supprimer</button>
-                            </th>
+                            </td>
                         </tr>
                     {/each}
                 </tbody>

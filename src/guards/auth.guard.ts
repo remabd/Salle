@@ -4,7 +4,7 @@ export default class AuthGuard {
     isConnected(): boolean {
         const authController = new AuthController();
         const connexion = authController.getConnexion();
-        if (connexion.data) {
+        if (connexion.success) {
             return true;
         }
         return false;
@@ -13,7 +13,7 @@ export default class AuthGuard {
     isAdmin(): boolean {
         const authController = new AuthController();
         const connexion = authController.getConnexion();
-        if (connexion?.data?.admin) {
+        if (connexion.success && connexion.data.admin) {
             return true;
         }
         return false;

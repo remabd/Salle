@@ -1,7 +1,7 @@
 <script lang="ts">
-    const DAYS = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
-    const MONTHS = [
-        'January',
+    const JOURS = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+    const MOIS = [
+        'Janvier',
         'February',
         'March',
         'April',
@@ -15,24 +15,32 @@
         'December',
     ];
 
-    type HalfDay = 'AM' | 'PM';
+    type Creneau = 'AM' | 'PM';
 
-    interface Cell {
-        d: number;
-        dm: number;
-        dy: number;
-        otherMonth: boolean;
+    interface Cellule {
+        jours: number;
+        mois: number;
+        annee: number;
+        autreMois: boolean;
     }
 
-    let { selected = $bindable(), ...props } = $props();
+    interface Props {
+        selected?: string | null;
+        disabled?: string[];
+    }
+
+    let { selected = $bindable(null), disabled = $bindable([]) }: Props = $props();
     let current = $state(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
 
     const year = $derived(current.getFullYear());
     const month = $derived(current.getMonth());
-    const title = $derived(`${MONTHS[month]} ${year}`);
+    const title = $derived(`${MOIS[month]} ${year}`);
     const cells = $derived(buildCells(year, month));
 
-    function buildCells(y: number, m: number): Cell[] {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    function buildCells(y: number, m: number): Cellule[] {
         const first = new Date(y, m, 1);
         let startDow = first.getDay();
         startDow = startDow === 0 ? 6 : startDow - 1;
@@ -41,37 +49,52 @@
         const prevMonthDays = new Date(y, m, 0).getDate();
         const total = Math.ceil((startDow + daysInMonth) / 7) * 7;
 
-        return Array.from({ length: total }, (_, i): Cell => {
+        return Array.from({ length: total }, (_, i): Cellule => {
             if (i < startDow) {
                 return {
-                    d: prevMonthDays - startDow + i + 1,
-                    dm: (m - 1 + 12) % 12,
-                    dy: m === 0 ? y - 1 : y,
-                    otherMonth: true,
+                    jours: prevMonthDays - startDow + i + 1,
+                    mois: (m - 1 + 12) % 12,
+                    annee: m === 0 ? y - 1 : y,
+                    autreMois: true,
                 };
             } else if (i >= startDow + daysInMonth) {
                 return {
-                    d: i - startDow - daysInMonth + 1,
-                    dm: (m + 1) % 12,
-                    dy: m === 11 ? y + 1 : y,
-                    otherMonth: true,
+                    jours: i - startDow - daysInMonth + 1,
+                    mois: (m + 1) % 12,
+                    annee: m === 11 ? y + 1 : y,
+                    autreMois: true,
                 };
             } else {
                 return {
-                    d: i - startDow + 1,
-                    dm: m,
-                    dy: y,
-                    otherMonth: false,
+                    jours: i - startDow + 1,
+                    mois: m,
+                    annee: y,
+                    autreMois: false,
                 };
             }
         });
     }
 
-    function key(dy: number, dm: number, d: number, half: HalfDay): string {
-        return `${dy}-${String(dm + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}-${half}`;
+    function key(dy: number, dm: number, d: number, half: Creneau): string {
+        return `${String(d).padStart(2, '0')}-${String(dm + 1).padStart(2, '0')}-${dy}-${half}`;
     }
 
-    function toggle(dy: number, dm: number, d: number, half: HalfDay): void {
+    function isPast(dy: number, dm: number, d: number): boolean {
+        const date = new Date(dy, dm, d);
+        date.setHours(0, 0, 0, 0);
+        return date < today;
+    }
+
+    function isUnavailable(dy: number, dm: number, d: number, half: Creneau): boolean {
+        return disabled.includes(key(dy, dm, d, half));
+    }
+
+    function isDisabled(dy: number, dm: number, d: number, half: Creneau): boolean {
+        return isPast(dy, dm, d) || isUnavailable(dy, dm, d, half);
+    }
+
+    function toggle(dy: number, dm: number, d: number, half: Creneau): void {
+        if (isDisabled(dy, dm, d, half)) return;
         const k = key(dy, dm, d, half);
         selected = selected === k ? null : k;
     }
@@ -93,21 +116,25 @@
     </div>
 
     <div class="grid">
-        {#each DAYS as label}
+        {#each JOURS as label}
             <div class="day-label">{label}</div>
         {/each}
 
-        {#each cells as { d, dm, dy, otherMonth }}
+        {#each cells as { jours: d, mois: dm, annee: dy, autreMois: otherMonth }}
             <div class="day-cell" class:other-month={otherMonth}>
                 <div class="day-num">{d}</div>
                 <div class="halves">
-                    {#each ['AM', 'PM'] as HalfDay[] as half}
+                    {#each ['AM', 'PM'] as Creneau[] as half}
+                        {@const disabled = isDisabled(dy, dm, d, half)}
                         <button
                             class="half"
                             onclick={() => toggle(dy, dm, d, half)}
                             aria-label="{d}/{dm + 1} {half}"
                             class:selected={selected === key(dy, dm, d, half)}
+                            class:disabled
                             aria-pressed={selected === key(dy, dm, d, half)}
+                            aria-disabled={disabled}
+                            {disabled}
                         >
                             <span class="half-label">{half}</span>
                         </button>
@@ -118,9 +145,9 @@
     </div>
 
     {#if selected}
-        {@const [y, m, d, half] = selected.split('-')}
+        {@const [d, m, y, half] = selected.split('-')}
         <div class="summary">
-            <span class="tag">{d}/{m} {half}</span>
+            <span class="tag">{d}/{m}/{y} {half}</span>
         </div>
     {/if}
 </div>
@@ -199,11 +226,22 @@
     .half:last-child {
         border-right: none;
     }
-    .half:hover {
+
+    .half:hover:not(.disabled) {
         background: #dbeafe;
     }
+
     .half.selected {
         background: #1d4ed8;
+    }
+
+    .half.disabled {
+        cursor: not-allowed;
+        background: #f3f3f3;
+    }
+
+    .half.disabled .half-label {
+        color: #ccc;
     }
 
     .half-label {

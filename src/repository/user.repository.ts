@@ -1,4 +1,4 @@
-import type { User, CreateUserDto, UpdateUserDto } from '../models/user.entity';
+import type { User, UserDto } from '../models/user.entity';
 import { v4 as uuid } from 'uuid';
 
 export default class UserRepository {
@@ -24,8 +24,8 @@ export default class UserRepository {
         return user ? user : null;
     }
 
-    save(createUserDto: CreateUserDto): void {
-        const user: User = { ...createUserDto, id: uuid() };
+    save(userDto: UserDto): void {
+        const user: User = { ...userDto, id: uuid() };
         this.users.push(user);
         this.synchronize();
     }
@@ -36,9 +36,9 @@ export default class UserRepository {
         this.synchronize();
     }
 
-    update(id: string, updateUserDto: UpdateUserDto): void {
+    update(id: string, userDto: UserDto): void {
         const index = this.users.findIndex((user: User) => user.id === id);
-        this.users.splice(index, 1, { ...updateUserDto, id: id });
+        this.users.splice(index, 1, { ...userDto, id: id });
         this.synchronize();
     }
 

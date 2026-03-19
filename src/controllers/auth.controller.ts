@@ -1,5 +1,5 @@
 import { type Response } from '../models/response.entity';
-import type { LoginDto, CreateUserDto, User, UserHead } from '../models/user.entity';
+import type { LoginDto, UserDto, User, UserHead } from '../models/user.entity';
 import AuthRepository from '../repository/auth.repository';
 import UserRepository from '../repository/user.repository';
 import * as bcrypt from 'bcryptjs';
@@ -19,18 +19,16 @@ export default class AuthController {
         const user = this.userRepository.findOneByEmail(loginDto.email);
         if (!user) {
             return {
-                status: Status.UNAUTHORIZED,
-                message: 'Identifiants incorrects',
-                data: null,
+                success: false,
+                error: { message: 'Identifiants incorrects' },
             };
         }
 
         const valid = await bcrypt.compare(loginDto.password, user.password);
         if (!valid) {
             return {
-                status: Status.UNAUTHORIZED,
-                message: 'Identifiants incorrects',
-                data: null,
+                success: false,
+                error: { message: 'Identifiants incorrects' },
             };
         }
 
@@ -64,17 +62,17 @@ export default class AuthController {
         this.authRepository.removeConnexion();
     }
 
-    public async register(createUserDto: CreateUserDto): Promise<Response> {
-        const exist = this.userRepository.findOneByEmail(createUserDto.email);
+    public async register(userDto: UserDto): Promise<Response> {
+        const exist = this.userRepository.findOneByEmail(userDto.email);
         if (exist) {
             return {
                 success: false,
                 error: { message: 'Email déja utilisé' },
             };
         }
-        const hash = await bcrypt.hash(createUserDto.password, this.SALT);
-        createUserDto.password = hash;
-        this.userRepository.save(createUserDto);
+        const hash = await bcrypt.hash(userDto.password, this.SALT);
+        userDto.password = hash;
+        this.userRepository.save(userDto);
         return {
             success: true,
             data: null,

@@ -1,8 +1,8 @@
 <script lang="ts">
-    import type { CreateUserDto } from '../models/user.entity';
+    import type { UserDto } from '../models/user.entity';
 
     interface Props {
-        userDto: CreateUserDto;
+        userDto: UserDto;
         errorMessage: string;
         mode: 'create' | 'update';
         isVisible: boolean;

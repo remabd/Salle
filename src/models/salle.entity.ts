@@ -11,5 +11,4 @@ export interface Salle {
 
 export type SalleWithReservations = Salle & { reservations: Reservation[] };
 
-export type CreateSalleDto = Omit<Salle, 'id'>;
-export type UpdateSalleDto = CreateSalleDto;
+export type SalleDto = Omit<Salle, 'id'>;
