@@ -153,8 +153,8 @@
                             <td>{findSalleById(res.salleId)}</td>
                             <td>{res.date}</td>
                             <td>
-                                <button onclick={() => openUpdatePopup(res)}>Modifier</button>
-                                <button onclick={() => CreateReservation(res.id)}>Supprimer</button>
+                                <button class="btn-edit" onclick={() => openUpdatePopup(res)}>Modifier</button>
+                                <button class="btn-delete" onclick={() => CreateReservation(res.id)}>Supprimer</button>
                             </td>
                         </tr>
                     {/each}
