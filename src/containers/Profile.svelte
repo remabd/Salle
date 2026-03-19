@@ -3,6 +3,7 @@
     import AuthController from '../controllers/auth.controller';
     import ReservationController from '../controllers/reservation.controller';
     import type { Reservation } from '../models/reservation.entity';
+    import SalleController from '../controllers/salle.controller';
     
     let userEmail: string = "";
     let userReservations: Reservation[] = [];
@@ -40,6 +41,22 @@
             }
         }
     }
+
+    function getSalleName(id: string) : string {
+        const salleController = new SalleController();
+        const res = salleController.findOneById(id);
+        console.log(res,id);
+        if(res.success) {
+            return res.data.name;
+        } else {
+            return "";
+        }
+    }
+
+    function getSalleCreneau(date : string) : string {
+        const creneau = date.split("-")[3];
+        return creneau === "AM" ? "Matinée" : "Après-Midi";
+    }
 </script>
 
 <h1>Profil de {userEmail}</h1>
@@ -51,8 +68,8 @@
         <ul>
             {#each userReservations as reservation}
                 <li>
-                    {reservation.date} - {reservation.salleName} - {reservation.creneau}
-                    <button type="button" on:click={() => annulerReservation(reservation)} disabled={!isCancellable(reservation.date)} title={!isCancellable(reservation.date) ? "Impossible d'annuler moins de 24h avant" : "Annuler"}>Annuler</button>
+                    {reservation.date} - {getSalleCreneau(reservation.date)} - {getSalleName(reservation.salleId)}
+                    <button type="button" onclick={() => annulerReservation(reservation)} disabled={!isCancellable(reservation.date)} title={!isCancellable(reservation.date) ? "Impossible d'annuler moins de 24h avant" : "Annuler"}>Annuler</button>
                 </li>
             {/each}
         </ul>
