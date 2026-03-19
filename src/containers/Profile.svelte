@@ -5,9 +5,9 @@
     import type { Reservation } from '../models/reservation.entity';
     import SalleController from '../controllers/salle.controller';
     import UserController from '../controllers/user.controller';
-    
-    let userFirstName = $state<string>("");
-    let userLastName = $state<string>("");
+
+    let userFirstName = $state<string>('');
+    let userLastName = $state<string>('');
     let userReservations = $state<Reservation[]>([]); // Récupérer state
     const reservationController = new ReservationController();
 
@@ -16,13 +16,12 @@
         const userController = new UserController();
         const response = authController.getConnexion();
 
-        if(response.success) {
+        if (response.success) {
             const resUser = userController.findOneById(response.data.id);
-            if(resUser.success) {
+            if (resUser.success) {
                 userFirstName = resUser.data.firstName;
                 userLastName = resUser.data.lastName;
             }
-            // Récupérer les reservations de l'user
             const resData = reservationController.findByUserId(response.data.id);
             if (resData.success) {
                 userReservations = resData.data;
@@ -39,7 +38,11 @@
     }
 
     function annulerReservation(reservation: Reservation) {
-        if(confirm(`Voulez-vous vraiment annuler votre réservation du ${reservation.date} pour la salle ${reservation.salleId} ?`)) {
+        if (
+            confirm(
+                `Voulez-vous vraiment annuler votre réservation du ${reservation.date} pour la salle ${reservation.salleId} ?`
+            )
+        ) {
             const response = reservationController.remove(reservation.id);
             if (response.success) {
                 userReservations = userReservations.filter((r) => r.id !== reservation.id); //Mettre a jour la liste des reservations
@@ -66,8 +69,7 @@
     }
 </script>
 
-<!-- Changer userEmail par userFirstName -->
-<h1>Profil de {userFirstName} {userLastName}</h1> 
+<h1>Profil de {userFirstName} {userLastName}</h1>
 
 <div>
     <h2>Mes réservations</h2>
@@ -77,7 +79,6 @@
         <table>
             <thead>
                 <tr>
-                    <!-- <th scope="col">Utilisateur</th> -->
                     <th scope="col">Salle</th>
                     <th scope="col">Date</th>
                     <th scope="col">Créneau</th>
@@ -86,14 +87,21 @@
             </thead>
             <tbody>
                 {#each userReservations as reservation}
-                <tr>
-                    <td>{getSalleName(reservation.salleId)}</td>
-                    <td>{reservation.date}</td>
-                    <td>{getSalleCreneau(reservation.date)}</td>
-                    <td>
-                        <button type="button" onclick={() => annulerReservation(reservation)} disabled={!isCancellable(reservation.date)} title={!isCancellable(reservation.date) ? "Impossible d'annuler moins de 24h avant" : "Annuler"}>Annuler</button>
-                    </td>
-                </tr>
+                    <tr>
+                        <td>{getSalleName(reservation.salleId)}</td>
+                        <td>{reservation.date}</td>
+                        <td>{getSalleCreneau(reservation.date)}</td>
+                        <td>
+                            <button
+                                type="button"
+                                onclick={() => annulerReservation(reservation)}
+                                disabled={!isCancellable(reservation.date)}
+                                title={!isCancellable(reservation.date)
+                                    ? "Impossible d'annuler moins de 24h avant"
+                                    : 'Annuler'}>Annuler</button
+                            >
+                        </td>
+                    </tr>
                 {/each}
             </tbody>
         </table>
@@ -101,7 +109,6 @@
 </div>
 
 <style>
-
     h2 {
         font-size: 2rem;
         padding: 20px;
@@ -115,7 +122,8 @@
         width: 100%;
     }
 
-    th, td {
+    th,
+    td {
         padding: 20px;
     }
 
@@ -133,4 +141,3 @@
         cursor: not-allowed;
     }
 </style>
-
