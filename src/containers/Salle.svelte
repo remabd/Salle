@@ -20,7 +20,8 @@
     let teacherComputer = $state<boolean>(false);
     let airCool = $state<boolean>(false);
     let selectedDate = $state<string | null>();
-    let disabled = $state([]);
+    let disabled = $state<string[]>([]);
+    let userId = $state<string>('');
 
     let displayed = $derived(
         salles.filter(
@@ -48,14 +49,19 @@
                 });
             }
         });
+        const connexionResponse = authController.getConnexion();
+        if (connexionResponse.success) {
+            userId = connexionResponse.data.id;
+        }
+        const res_ = reservationController.findByUserId(userId);
+        if (res_.success) {
+            res_.data.forEach((r: Reservation) => {
+                disabled.push(r.date);
+            });
+        }
     });
 
     function reserver(s: SalleWithReservations) {
-        const resAuth = authController.getConnexion();
-        let userId = '';
-        if (resAuth.success) {
-            userId = resAuth.data.id;
-        }
         if (selectedDate && userId) {
             reservationController.save({
                 date: selectedDate,
@@ -129,7 +135,7 @@
                             <span id="tag">Clim</span>
                         {/if}
                     </span>
-                    <button type="button" on:click={() => reserver(salle)} title="Réserver la salle"
+                    <button type="button" onclick={() => reserver(salle)} title="Réserver la salle"
                         >Réserver la salle</button
                     >
                 </li>
