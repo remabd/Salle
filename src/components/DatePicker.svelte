@@ -29,7 +29,7 @@
         disabled?: string[];
     }
 
-    let { selected = $bindable(null), disabled = $bindable([]) }: Props = $props();
+    let { selected = $bindable(), disabled = $bindable([]) }: Props = $props();
     let current = $state(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
 
     const year = $derived(current.getFullYear());
@@ -110,9 +110,9 @@
 
 <div class="picker">
     <div class="header">
-        <button onclick={prevMonth}>‹</button>
+        <button type="button" onclick={prevMonth}>‹</button>
         <span>{title}</span>
-        <button onclick={nextMonth}>›</button>
+        <button type="button" onclick={nextMonth}>›</button>
     </div>
 
     <div class="grid">
@@ -127,6 +127,7 @@
                     {#each ['AM', 'PM'] as Creneau[] as half}
                         {@const disabled = isDisabled(dy, dm, d, half)}
                         <button
+                            type="button"
                             class="half"
                             onclick={() => toggle(dy, dm, d, half)}
                             aria-label="{d}/{dm + 1} {half}"

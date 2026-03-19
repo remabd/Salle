@@ -65,7 +65,7 @@
         }
     }
 
-    function updateUser(id: string, reservation: ReservationDto) {
+    function updateReservation(id: string, reservation: ReservationDto) {
         if (!validationGuard.validateReservationDto(reservation)) {
             errorMessage = 'Erreur de saisie';
         } else {
@@ -98,7 +98,7 @@
         if (mode === 'create') {
             addReservation(reservationDto);
         } else {
-            updateUser(id, reservationDto);
+            updateReservation(id, reservationDto);
         }
     }
 

@@ -20,6 +20,7 @@
     let teacherComputer = $state<boolean>(false);
     let airCool = $state<boolean>(false);
     let selectedDate = $state<string | null>();
+    let disabled = $state([]);
 
     let displayed = $derived(
         salles.filter(
@@ -103,7 +104,7 @@
 
         <fieldset>
             <legend>Date</legend>
-            <DatePicker bind:selected={selectedDate} />
+            <DatePicker bind:selected={selectedDate} bind:disabled />
         </fieldset>
     </div>
 </section>
