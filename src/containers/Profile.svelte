@@ -5,10 +5,17 @@
     import type { Reservation } from '../models/reservation.entity';
     import SalleController from '../controllers/salle.controller';
     import UserController from '../controllers/user.controller';
+<<<<<<< HEAD
     
     let userFirstName = $state<string>("");
     let userLastName = $state<string>("");
     let userReservations = $state<Reservation[]>([]);
+=======
+
+    let userFirstName = $state<string>('');
+    let userLastName = $state<string>('');
+    let userReservations = $state<Reservation[]>([]); // Récupérer state
+>>>>>>> main
     const reservationController = new ReservationController();
 
     onMount(() => {
@@ -16,9 +23,9 @@
         const userController = new UserController();
         const response = authController.getConnexion();
 
-        if(response.success) {
+        if (response.success) {
             const resUser = userController.findOneById(response.data.id);
-            if(resUser.success) {
+            if (resUser.success) {
                 userFirstName = resUser.data.firstName;
                 userLastName = resUser.data.lastName;
             }
@@ -40,13 +47,8 @@
     function annulerReservation(reservation: Reservation) {
         if(confirm(`Voulez-vous vraiment annuler votre réservation du ${reservation.date} pour la salle ${getSalleName(reservation.salleId)} ?`)) {
             const response = reservationController.remove(reservation.id);
-<<<<<<< HEAD
             if(response.success) {
                 userReservations = userReservations.filter(r => r.id !== reservation.id);
-=======
-            if (response.success) {
-                userReservations = userReservations.filter((r) => r.id !== reservation.id); //Mettre a jour la liste des reservations
->>>>>>> main
             } else {
                 alert(response.error?.message || 'Erreur');
             }
@@ -56,7 +58,6 @@
     function getSalleName(id: string): string {
         const salleController = new SalleController();
         const res = salleController.findOneById(id);
-        console.log(res, id);
         if (res.success) {
             return res.data.name;
         } else {
@@ -70,7 +71,11 @@
     }
 </script>
 
+<<<<<<< HEAD
 <h1>Profil de {userFirstName} {userLastName}</h1> 
+=======
+<h1>Profil de {userFirstName} {userLastName}</h1>
+>>>>>>> main
 
 <div>
     <h2>Mes réservations</h2>
@@ -88,14 +93,21 @@
             </thead>
             <tbody>
                 {#each userReservations as reservation}
-                <tr>
-                    <td>{getSalleName(reservation.salleId)}</td>
-                    <td>{reservation.date}</td>
-                    <td>{getSalleCreneau(reservation.date)}</td>
-                    <td>
-                        <button type="button" onclick={() => annulerReservation(reservation)} disabled={!isCancellable(reservation.date)} title={!isCancellable(reservation.date) ? "Impossible d'annuler moins de 24h avant" : "Annuler"}>Annuler</button>
-                    </td>
-                </tr>
+                    <tr>
+                        <td>{getSalleName(reservation.salleId)}</td>
+                        <td>{reservation.date}</td>
+                        <td>{getSalleCreneau(reservation.date)}</td>
+                        <td>
+                            <button
+                                type="button"
+                                onclick={() => annulerReservation(reservation)}
+                                disabled={!isCancellable(reservation.date)}
+                                title={!isCancellable(reservation.date)
+                                    ? "Impossible d'annuler moins de 24h avant"
+                                    : 'Annuler'}>Annuler</button
+                            >
+                        </td>
+                    </tr>
                 {/each}
             </tbody>
         </table>
@@ -103,7 +115,6 @@
 </div>
 
 <style>
-
     h2 {
         font-size: 2rem;
         padding: 20px;
@@ -117,6 +128,14 @@
         width: 100%;
     }
 
+<<<<<<< HEAD
+=======
+    th,
+    td {
+        padding: 20px;
+    }
+
+>>>>>>> main
     tbody tr {
         border-top: 2px solid var(--bgColor);
     }
@@ -131,4 +150,3 @@
         cursor: not-allowed;
     }
 </style>
-

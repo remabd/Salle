@@ -37,19 +37,21 @@
     let users = $state<User[]>([]);
 
     let disabled = $derived.by(() => {
+        const result: string[] = [];
         const res = reservationController.findBySalleId(reservationDto.salleId);
         if (res.success) {
-            const result: string[] = [];
             res.data.forEach((reservation: Reservation) => {
                 result.push(reservation.date);
             });
-            return result;
-        } else {
-            return [];
         }
+        const res_ = reservationController.findByUserId(reservationDto.userId);
+        if (res_.success) {
+            res_.data.forEach((reservation: Reservation) => {
+                result.push(reservation.date);
+            });
+        }
+        return result;
     });
-
-    $inspect(disabled);
 
     onMount(() => {
         const resUsers = userController.find();
