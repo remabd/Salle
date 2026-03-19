@@ -1,165 +1,143 @@
 <script lang="ts">
     import { onMount } from 'svelte';
+    import type { Salle, SalleWithReservations } from '../models/salle.entity';
+    import type { Reservation } from '../models/reservation.entity';
+
     import SalleController from '../controllers/salle.controller';
-    import type { Salle } from '../models/salle.entity';
-    import ManageSalles from '../components/ManageSalles.svelte';
-    import CalendarPopup from '../components/CalendarPopup.svelte';
-    import ReservationPopup from '../components/ReservationPopup.svelte';
     import ReservationController from '../controllers/reservation.controller';
+
+    import DatePicker from '../components/DatePicker.svelte';
     import AuthController from '../controllers/auth.controller';
 
     const salleController = new SalleController();
     const reservationController = new ReservationController();
     const authController = new AuthController();
-    
-    let sallesDispos: Salle[] = [];
 
-    function loadSalles() {
-        const response = salleController.find();
-        if (response.success && response.data) {
-            sallesDispos = response.data;
-        }
-    }
+    let salles = $state<SalleWithReservations[]>([]);
+
+    let capacity = $state(0);
+    let computers = $state(0);
+    let teacherComputer = $state<boolean>(false);
+    let airCool = $state<boolean>(false);
+    let selectedDate = $state<string | null>();
+
+    let displayed = $derived(
+        salles.filter(
+            (salle: SalleWithReservations) =>
+                salle.capacity >= capacity &&
+                salle.computers >= computers &&
+                (!teacherComputer || (teacherComputer && salle.teacherComputer)) &&
+                (!airCool || (airCool && salle.aircool)) &&
+                !salle.reservations.some((r: Reservation) => r.date === selectedDate)
+        )
+    );
 
     onMount(() => {
-        loadSalles();
-    });
-
-    const today = new Date().toISOString().split('T')[0];
-    let selectedDate = today;
-    
-    let showCalendarPopup = false;
-    let showSallePopup = false;
-
-    // filtres des salles
-    let filterCapacity = 0;
-    let filterType = 'tous';
-    let filterAircool = false;
-    
-    $: sallesFiltrees = sallesDispos.filter(salle => {
-        const correspondPlaces = salle.capacity >= filterCapacity;
-        
-        let salleType = 'classique';
-        if (salle.capacity >= 100) salleType = 'amphi';
-        else if (salle.computers > 0) salleType = 'informatique';
-        
-        const correspondType = filterType === 'tous' || salleType === filterType;
-        const correspondClim = !filterAircool || salle.aircool === filterAircool;
-        return correspondPlaces && correspondType && correspondClim;
-    });
-
-    function handleDateChange(event: CustomEvent<string>) {
-        selectedDate = event.detail;
-        console.log("Selected date:", selectedDate);
-    }
-
-    function handleReservationConfirm(event: CustomEvent<{salle: Salle, date: string, creneau: string}>) {
-        const session = authController.getConnexion();
-        if(session.success && session.data) {
-            reservationController.save({
-                userId: session.data.id,
-                salleId: event.detail.salle.id,
-                salleName: event.detail.salle.name,
-                date: event.detail.date,
-                creneau: event.detail.creneau
-            });
-            alert("Reservation Confirmée");
-        } else {
-            alert("Veuillez vous connecter");
+        let _salles: Salle[] = [];
+        const res = salleController.find();
+        if (res.success) {
+            _salles = res.data;
         }
-    }
+        _salles.forEach((s: Salle) => {
+            const _res = reservationController.findBySalleId(s.id);
+            if (_res.success) {
+                salles.push({
+                    ...s,
+                    reservations: _res.data,
+                });
+            }
+        });
+    });
 
-    function openCalendar() {
-        showCalendarPopup = true;
-    }
-
-    let selectedSalle: Salle | null = null;
-
-    function openSalleReservation(salle: Salle) {
-        selectedSalle = salle;
-        showSallePopup = true;
+    function reserver(s: SalleWithReservations) {
+        const resAuth = authController.getConnexion();
+        let userId = '';
+        if (resAuth.success) {
+            userId = resAuth.data.id;
+        }
+        if (selectedDate && userId) {
+            reservationController.save({
+                date: selectedDate,
+                userId: userId,
+                salleId: s.id,
+            });
+        }
     }
 </script>
 
-<h1>Salles</h1>
+<h1>Réserver une salle</h1>
 
-<div class="filters-bar">
-    <div class="filter-group">
-        <label for="filter-places">Places minimum :</label>
-        <input id="filter-places" type="number" min="0" max="250" step="5" bind:value={filterCapacity} />
-    </div>
+<section>
+    <h2>Filtres</h2>
+    <div>
+        <label for="capacity">Capacité</label>
+        <input type="number" id="capacity" bind:value={capacity} />
 
-    <div class="filter-group">
-        <label for="filter-type">Type de salle</label>
-        <select id="filter-type" bind:value={filterType}>
-            <option value="tous">Tous les types</option>
-            <option value="classique">Classique</option>
-            <option value="informatique">Informatique</option>
-            <option value="amphi">Amphi</option>
-        </select>
-    </div>
+        <label for="computers">Nombre d'ordinateurs</label>
+        <input type="number" id="computers" bind:value={computers} />
 
-    <div class="filter-group">
-        <span>Climatisation</span>
-        <label for="filter-clim">
-            <input id="filter-clim" type="checkbox" bind:checked={filterAircool} />
-        </label>
+        <fieldset>
+            <legend>Ordinateur professeur</legend>
+            {#each [true, false] as option}
+                <label>
+                    <input
+                        type="radio"
+                        name="teacherComputer"
+                        value={option}
+                        bind:group={teacherComputer}
+                    />
+                    {option ? 'Oui' : 'Non'}
+                </label>
+            {/each}
+        </fieldset>
+
+        <fieldset>
+            <legend>Climatisation</legend>
+            {#each [true, false] as option}
+                <label>
+                    <input type="radio" name="airCool" value={option} bind:group={airCool} />
+                    {option ? 'Oui' : 'Non'}
+                </label>
+            {/each}
+        </fieldset>
+
+        <fieldset>
+            <legend>Date</legend>
+            <DatePicker bind:selected={selectedDate} />
+        </fieldset>
     </div>
+</section>
+
+<div class="salles-container">
+    <h2>Salles disponibles</h2>
+    {#if displayed.length > 0}
+        <ul>
+            {#each displayed as salle}
+                <li>
+                    <span>
+                        <strong>{salle.name}</strong>
+                        ({salle.capacity} places)
+                        <span id="tag"
+                            >{salle.capacity >= 100
+                                ? 'Amphi'
+                                : salle.computers > 0
+                                  ? 'Informatique'
+                                  : 'Classique'}</span
+                        >
+                        {#if salle.aircool}
+                            <span id="tag">Clim</span>
+                        {/if}
+                    </span>
+                    <button type="button" on:click={() => reserver(salle)} title="Réserver la salle"
+                        >Réserver la salle</button
+                    >
+                </li>
+            {/each}
+        </ul>
+    {:else}
+        <p>Aucune salle correspondante aux critères de recherche n'est disponible.</p>
+    {/if}
 </div>
-
-<div class="dashboard-contenu">
-    <div class="calendar">
-        <h2>Date</h2>
-        <span>{selectedDate}</span>
-        <button 
-            type="button" 
-            on:click={openCalendar} 
-            title="Choisir une date">Choisir la date
-        </button>
-    </div>
-
-    <CalendarPopup 
-        bind:show={showCalendarPopup}
-        bind:selectedDate={selectedDate}
-        on:close={() => showCalendarPopup = false}
-        on:select={handleDateChange}
-    />
-
-    <div class="salles-container">
-        <h2>Salles disponibles</h2>
-        {#if sallesFiltrees.length > 0}
-            <ul>
-                {#each sallesFiltrees as salle}
-                    <li>
-                        <span>
-                            <strong>{salle.name}</strong>
-                            ({salle.capacity} places)
-                            <span id="tag">{salle.capacity >= 100 ? "Amphi" : (salle.computers > 0 ? "Informatique" : "Classique")}</span>
-                            {#if salle.aircool}
-                                <span id="tag">Clim</span>
-                            {/if}
-                        </span>
-                        <button
-                            type="button"
-                            on:click={() => openSalleReservation(salle)}
-                            title="Réserver la salle"
-                        >Réserver la salle</button>
-                    </li>
-                {/each}
-            </ul>
-        {:else}
-            <p>Aucune salle correspondante aux critères de recherche n'est disponible.</p>
-        {/if}
-    </div>
-</div>
-
-<ReservationPopup 
-    bind:show={showSallePopup}
-    salle={selectedSalle}
-    selectedDate={selectedDate}
-    on:close={() => { showSallePopup = false; selectedSalle = null; }}
-    on:confirm={handleReservationConfirm}
-/>
 
 <style>
     .dashboard-contenu {
@@ -213,13 +191,14 @@
         font-size: 0.95rem;
     }
 
-    .filter-group input, .filter-group select {
+    .filter-group input,
+    .filter-group select {
         padding: 8px;
         border: 1px solid #ccc;
         border-radius: 4px;
     }
 
-    .filter-group input[type="checkbox"] {
+    .filter-group input[type='checkbox'] {
         width: 20px;
         height: 20px;
         vertical-align: middle;
