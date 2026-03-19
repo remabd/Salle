@@ -1,4 +1,4 @@
-import type { CreateUserDto, User, UpdateUserDto } from '../models/user.entity';
+import type { User, UserDto } from '../models/user.entity';
 import UserRepository from '../repository/user.repository';
 import type { Response } from '../models/response.entity';
 import { v4 as uuid } from 'uuid';
@@ -32,15 +32,15 @@ export default class UserController {
         };
     }
 
-    save(createUserDto: CreateUserDto): Response {
-        const exist = this.userRepository.findOneByEmail(createUserDto.email);
+    save(userDto: UserDto): Response {
+        const exist = this.userRepository.findOneByEmail(userDto.email);
         if (exist) {
             return {
                 success: false,
                 error: { message: 'Un utilisateur existe déja à cet email' },
             };
         }
-        const user: User = { ...createUserDto, id: uuid() };
+        const user: User = { ...userDto, id: uuid() };
         this.userRepository.save(user);
         return {
             success: true,
@@ -63,8 +63,8 @@ export default class UserController {
         };
     }
 
-    update(id: string, updateUserDto: UpdateUserDto): Response {
-        const conflict = this.userRepository.findOneByEmail(updateUserDto.email);
+    update(id: string, userDto: UserDto): Response {
+        const conflict = this.userRepository.findOneByEmail(userDto.email);
         if (conflict) {
             return {
                 success: false,
@@ -78,7 +78,7 @@ export default class UserController {
                 error: { message: 'Utilisateur introuvable' },
             };
         }
-        this.userRepository.update(id, updateUserDto);
+        this.userRepository.update(id, userDto);
         return {
             success: true,
             data: null,

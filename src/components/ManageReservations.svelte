@@ -1,12 +1,11 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import UserController from '../controllers/user.controller';
-    import type { CreateUserDto, UpdateUserDto, User } from '../models/user.entity';
-    import UserPopup from './UserPopup.svelte';
     import ValidationGuard from '../guards/validation.guard';
     import ReservationController from '../controllers/reservation.controller';
-    import type { CreateReservationDto, Reservation } from '../models/reservation.entity';
+    import type { ReservationDto, Reservation } from '../models/reservation.entity';
     import SalleController from '../controllers/salle.controller';
+    import ReservationPopup from './ReservationPopup.svelte';
 
     const reservationController = new ReservationController();
     const salleController = new SalleController();
@@ -18,7 +17,7 @@
     let isVisible = $state<boolean>(false);
 
     let mode = $state<'create' | 'update'>('create');
-    let reservationDto = $state<CreateReservationDto>({
+    let reservationDto = $state<ReservationDto>({
         salleId: '',
         userId: '',
         date: '',
@@ -44,7 +43,7 @@
         }
     }
 
-    function addReservation(reservation: CreateReservationDto) {
+    function addReservation(reservation: ReservationDto) {
         if (!validationGuard.validateReservationDto(reservation)) {
             errorMessage = 'Erreur de saisie';
         } else {
@@ -66,7 +65,7 @@
         }
     }
 
-    function updateUser(id: string, reservation: CreateReservationDto) {
+    function updateUser(id: string, reservation: ReservationDto) {
         if (!validationGuard.validateReservationDto(reservation)) {
             errorMessage = 'Erreur de saisie';
         } else {
@@ -130,7 +129,7 @@
     <h2>Gestion des réservations</h2>
 
     {#if isVisible}
-        <!-- < bind:reservationDto={reservationDto} bind:errorMessage bind:isVisible {mode} {onSave} /> -->
+        <ReservationPopup bind:reservationDto bind:errorMessage bind:isVisible {mode} {onSave} />
     {/if}
 
     <p>{errorMessage ? errorMessage : null}</p>
@@ -151,13 +150,13 @@
                 <tbody>
                     {#each reservations as res}
                         <tr>
-                            <th scope="row">{findUserById(res.userId)}</th>
-                            <th>{findSalleById(res.salleId)}</th>
-                            <th>{res.date}</th>
-                            <th>
+                            <td>{findUserById(res.userId)}</td>
+                            <td>{findSalleById(res.salleId)}</td>
+                            <td>{res.date}</td>
+                            <td>
                                 <button onclick={() => openUpdatePopup(res)}>Modifier</button>
                                 <button onclick={() => CreateReservation(res.id)}>Supprimer</button>
-                            </th>
+                            </td>
                         </tr>
                     {/each}
                 </tbody>

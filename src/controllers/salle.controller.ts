@@ -1,4 +1,4 @@
-import type { CreateSalleDto, Salle, UpdateSalleDto } from '../models/salle.entity';
+import type { Salle, SalleDto } from '../models/salle.entity';
 import SalleRepository from '../repository/salle.repository';
 import type { Response } from '../models/response.entity';
 import { v4 as uuid } from 'uuid';
@@ -46,15 +46,15 @@ export default class SalleController {
         };
     }
 
-    save(createSalleDto: CreateSalleDto): Response {
-        const exist = this.salleRepository.findOneByName(createSalleDto.name);
+    save(salleDto: SalleDto): Response {
+        const exist = this.salleRepository.findOneByName(salleDto.name);
         if (exist) {
             return {
                 success: false,
                 error: { message: 'Une salle existe déja à ce nom' },
             };
         }
-        const salle: Salle = { ...createSalleDto, id: uuid() };
+        const salle: Salle = { ...salleDto, id: uuid() };
         this.salleRepository.save(salle);
         return {
             success: true,
@@ -77,7 +77,7 @@ export default class SalleController {
         };
     }
 
-    update(id: string, updateSalleDto: UpdateSalleDto): Response {
+    update(id: string, salleDto: SalleDto): Response {
         const exist = this.salleRepository.findOneById(id);
         if (!exist) {
             return {
@@ -85,7 +85,7 @@ export default class SalleController {
                 error: { message: 'Salle introuvable' },
             };
         }
-        this.salleRepository.update({ ...updateSalleDto, id: id });
+        this.salleRepository.update({ ...salleDto, id: id });
         return {
             success: true,
             data: null,

@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import SalleController from '../controllers/salle.controller';
-    import type { Salle, CreateSalleDto } from '../models/salle.entity';
+    import type { Salle, SalleDto } from '../models/salle.entity';
 
     const salleController = new SalleController();
 
@@ -33,7 +33,7 @@
             return;
         }
 
-        const newSalle: CreateSalleDto = {
+        const newSalle: SalleDto = {
             name,
             capacity,
             computers,
