@@ -118,8 +118,12 @@
     </div>
 </div>
 
-<style>
+<!-- <style>
     select {
         padding: 8px;
+        background-color: var(--grey);
+        color: var(--slatedark);
+        border-radius: var(--borderRadius);
+        border: none;
     }
-</style>
+</style> -->

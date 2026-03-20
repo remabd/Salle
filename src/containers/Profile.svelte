@@ -31,7 +31,7 @@
 
     function isCancellable(date: string): boolean {
         const today = new Date();
-        const [year, month, day] = date.split('-');
+        const [day, month, year] = date.split('-');
         const resDate = new Date(Number(year), Number(month) - 1, Number(day), 0, 0, 0);
         const diff = resDate.getTime() - today.getTime();
         return diff >= 86400000; // 24h : 86 400 000ms

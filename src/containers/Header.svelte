@@ -28,9 +28,9 @@
     <ul>
         {#if isConnected}
             {#if !isAdmin}
-                <li><a href="#/salle">Resever</a></li>
+                <li><a href="#/salle">Réserver une salle</a></li>
             {:else}
-                <li><a href="#/dashboard">Dashboard</a></li>
+                <li><a href="#/dashboard">Tableau de bord</a></li>
             {/if}
             <div>
                 <a class="profile-btn" href="#/profile">Profil</a>

@@ -17,14 +17,22 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     --borderRadius: 8px;
-    --bgColor: #242424;
-    --slatedark: #1a1a1a;
+    --bgColor: #fdfdfd;
+    --slatedark: #202020;
     --softwhite: #f1f1f1;
     --blue: #007bff;
     --darkerblue: #0056b3;
     --red: #da1a1a;
     --grey: #cecece;
+    --green: #68c48e;
     --darkgreen: #2f7451;
+}
+
+#app {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
 }
 
 a {
@@ -32,6 +40,7 @@ a {
     color: #646cff;
     text-decoration: inherit;
 }
+
 a:hover {
     color: #535bf2;
 }
@@ -41,6 +50,10 @@ body {
     display: flex;
     min-width: 320px;
     min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--slatedark);
 }
 
 h1 {
@@ -63,13 +76,6 @@ h3 {
     text-align: center;
 }
 
-#app {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 2rem;
-    text-align: center;
-}
-
 button,
 .profile-btn {
     border-radius: 8px;
@@ -81,6 +87,11 @@ button,
     background-color: var(--slatedark);
     cursor: pointer;
     transition: border-color 0.25s;
+}
+
+button:hover, .profile-btn:hover {
+    opacity: 0.75;
+    transition: all 0.2s ease;
 }
 
 .errorMessage {
@@ -121,7 +132,7 @@ ul li {
 form {
     display: grid;
     background-color: var(--softwhite);
-    padding: 40px;
+    padding: 24px;
     border-radius: 8px;
     color: black;
     gap: 8px;
@@ -130,12 +141,8 @@ form {
 }
 
 form input {
-    padding: 10px;
+    padding: 8px;
     border-radius: 4px;
-}
-
-.errorMessage {
-    color: rgb(218, 0, 0);
 }
 
 header ul {
@@ -335,6 +342,14 @@ th, td {
             flex-direction: row;
             justify-content: space-between;
         }
+
+        select {
+            padding: 8px;
+            background-color: var(--grey);
+            color: var(--slatedark);
+            border-radius: var(--borderRadius);
+            border: none;
+    }
     }
 
     .btn-delete {

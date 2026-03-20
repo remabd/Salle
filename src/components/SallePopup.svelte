@@ -97,7 +97,7 @@
                             <input
                                 type="radio"
                                 name="aircool"
-                                value={false}
+                                value={true}
                                 bind:group={salleDto.aircool}
                             />
                             Oui

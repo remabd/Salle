@@ -33,7 +33,7 @@
         }
     }
 
-    function CreateReservation(id: string) {
+    function cancelReservation(id: string) {
         const response = reservationController.remove(id);
         if (response.success) {
             errorMessage = 'Réservation supprimée';
@@ -131,8 +131,8 @@
         {#if isVisible}
             <ReservationPopup bind:reservationDto bind:errorMessage bind:isVisible {mode} {onSave} />
         {/if}
-        <p>{errorMessage ? errorMessage : null}</p>
-        <button class="btn-add" onclick={openPopup}>Ajouter</button>
+        <p class="errorMessage">{errorMessage ? errorMessage : null}</p>
+        <button class="btn-add" onclick={openPopup}>Ajouter une réservation</button>
     </div>
 
     <div>
@@ -154,7 +154,7 @@
                             <td>{res.date}</td>
                             <td>
                                 <button class="btn-edit" onclick={() => openUpdatePopup(res)}>Modifier</button>
-                                <button class="btn-delete" onclick={() => CreateReservation(res.id)}>Supprimer</button>
+                                <button class="btn-delete" onclick={() => cancelReservation(res.id)}>Supprimer</button>
                             </td>
                         </tr>
                     {/each}

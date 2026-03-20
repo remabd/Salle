@@ -8,6 +8,7 @@
 
     let salles: Salle[] = $state<Salle[]>([]);
     let errorMessage = $state<string>('');
+    let successMessage = $state<string>('');
     let isVisible = $state<boolean>(false);
 
     let mode = $state<'create' | 'update'>('create');
@@ -84,7 +85,7 @@
     function updateSalle(id: string, salle: SalleDto) {
         const response = salleController.update(id, salle);
         if (response.success) {
-            errorMessage = "Salle modifiée";
+            successMessage = "Salle modifiée";
             isVisible = false;
             salleDto = {
                 name: '',
@@ -97,12 +98,12 @@
             id = "";
             refreshSalles();
         } else {
-            errorMessage = response.error.message;
+            errorMessage = response.error.message;;
         }
     }
 
     function openUpdatePopup(salles_ : Salle) {
-        salleDto = salles_;
+        salleDto = { ...salles_ };
         mode = "update";
         id = salles_.id;
         isVisible = true;
@@ -128,6 +129,9 @@
             <SallePopup bind:salleDto bind:errorMessage bind:isVisible {mode} {onSave} />
         {/if}
         <p>{errorMessage ? errorMessage : null}</p>
+        {#if successMessage}
+            <div class="successMessage">{successMessage}</div>
+        {/if}
         {#if errorMessage}
             <div class="errorMessage">{errorMessage}</div>
         {/if}
