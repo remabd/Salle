@@ -1,18 +1,50 @@
 [
     {
-        "id": 1,
-        "name": "Salle Classique",
-        "capacity": 30,
+        "id": "2e695e43-680b-41c8-bb27-cc6d75ae602f",
+        "name": "corriandre",
+        "capacity": 28,
+        "computers": 28,
+        "teacherComputer": false,
+        "aircool": true
+    },
+    {
+        "id": "2e695e43-680b-41c8-bb27-cc6d75ae612f",
+        "name": "Basilic",
+        "capacity": 15,
         "computers": 0,
-        "teacherComputer": 1,
+        "teacherComputer": true,
+        "aircool": true
+    },
+    {
+        "id": "2e695e43-680b-41c8-bb27-cc6d75ae622f",
+        "name": "Menthe",
+        "capacity": 40,
+        "computers": 0,
+        "teacherComputer": false,
         "aircool": false
     },
     {
-        "id": 2,
-        "name": "Salle Info",
-        "capacity": 25,
+        "id": "2e695e43-680b-41c8-bb27-cc6d75ae632f",
+        "name": "Aneth",
+        "capacity": 40,
+        "computers": 0,
+        "teacherComputer": false,
+        "aircool": true
+    },
+    {
+        "id": "2e695e43-680b-41c8-bb27-cc6d75ae642f",
+        "name": "Thym",
+        "capacity": 15,
         "computers": 15,
-        "teacherComputer": 1,
+        "teacherComputer": true,
+        "aircool": false
+    },
+    {
+        "id": "2e695e43-680b-41c8-bb27-cc6d75ae652f",
+        "name": "Estragon",
+        "capacity": 15,
+        "computers": 0,
+        "teacherComputer": false,
         "aircool": true
     }
 ]
