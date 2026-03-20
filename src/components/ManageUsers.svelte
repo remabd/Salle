@@ -110,16 +110,14 @@
 </script>
 
 <section>
-    <h2>Gestion des utilisateurs</h2>
-
-    {#if isVisible}
-        <UserPopup bind:userDto bind:errorMessage bind:isVisible {mode} {onSave} />
-    {/if}
-
-    <p>{errorMessage ? errorMessage : null}</p>
-
-    <button onclick={openPopup}>Ajouter</button>
-
+    <div>
+        <h2>Gestion des utilisateurs</h2>
+        {#if isVisible}
+            <UserPopup bind:userDto bind:errorMessage bind:isVisible {mode} {onSave} />
+        {/if}
+        <p>{errorMessage ? errorMessage : null}</p>
+        <button class="btn-add" onclick={openPopup}>Ajouter un utilisateur</button>
+    </div>
     <div>
         {#if users.length}
             <table>
@@ -140,8 +138,8 @@
                             <td>{user.email}</td>
                             <td>{user.admin ? 'OUI' : 'NON'}</td>
                             <td>
-                                <button onclick={() => openUpdatePopup(user)}>Modifier</button>
-                                <button onclick={() => deleteUser(user.id)}>Supprimer</button>
+                                <button class="btn-edit" onclick={() => openUpdatePopup(user)}>Modifier</button>
+                                <button class="btn-delete" onclick={() => deleteUser(user.id)}>Supprimer</button>
                             </td>
                         </tr>
                     {/each}
@@ -152,3 +150,12 @@
         {/if}
     </div>
 </section>
+
+<style>
+    div:first-child {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 20px 0;
+    }
+</style>

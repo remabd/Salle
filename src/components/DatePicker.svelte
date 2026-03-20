@@ -1,18 +1,18 @@
 <script lang="ts">
-    const JOURS = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+    const JOURS = ['Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa', 'Di'];
     const MOIS = [
         'Janvier',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December',
+        'Février',
+        'Mars',
+        'Avril',
+        'Mai',
+        'Juin',
+        'Juillet',
+        'Août',
+        'Septembre',
+        'Octobre',
+        'Novembre',
+        'Décembre',
     ];
 
     type Creneau = 'AM' | 'PM';
@@ -27,9 +27,10 @@
     interface Props {
         selected?: string | null;
         disabled?: string[];
+        showSalleMessage?: boolean;
     }
 
-    let { selected = $bindable(), disabled = $bindable([]) }: Props = $props();
+    let { selected = $bindable(), disabled = $bindable([]), showSalleMessage = false }: Props = $props();
     let current = $state(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
 
     const year = $derived(current.getFullYear());
@@ -148,17 +149,20 @@
     {#if selected}
         {@const [d, m, y, half] = selected.split('-')}
         <div class="summary">
+            <p>Vous réservez pour le : </p>
             <span class="tag">{d}/{m}/{y} {half}</span>
+            {#if showSalleMessage}
+                <p id="choose-salle">Veuillez à présent choisir une salle.</p>
+            {/if}
         </div>
     {/if}
 </div>
 
 <style>
     .picker {
-        max-width: 380px;
-        font-family: sans-serif;
+        background-color: white;
         border: 1px solid #ddd;
-        border-radius: 12px;
+        border-radius: var(--borderRadius);
         overflow: hidden;
     }
 
@@ -169,10 +173,10 @@
         padding: 10px 16px;
         border-bottom: 1px solid #eee;
         font-weight: 500;
+        color: var(--slatedark);
     }
 
     .header button {
-        background: none;
         border: 1px solid #ddd;
         border-radius: 6px;
         padding: 2px 10px;
@@ -194,7 +198,7 @@
 
     .day-cell {
         border: 0.5px solid #eee;
-        min-height: 52px;
+        min-height: 64px;
         display: flex;
         flex-direction: column;
     }
@@ -204,8 +208,10 @@
     }
 
     .day-num {
-        font-size: 11px;
-        padding: 3px 5px;
+        font-size: 12px;
+        color: var(--slatedark);
+        text-align: start;
+        padding-left: 8px;
     }
 
     .halves {
@@ -229,36 +235,36 @@
     }
 
     .half:hover:not(.disabled) {
-        background: #dbeafe;
+        background: var(--green);
     }
 
     .half.selected {
-        background: #1d4ed8;
+        background: var(--darkgreen)
     }
 
     .half.disabled {
         cursor: not-allowed;
-        background: #f3f3f3;
+        background: #eee;
     }
 
     .half.disabled .half-label {
-        color: #ccc;
+        color: var(--grey);
     }
 
     .half-label {
         position: absolute;
-        bottom: 3px;
+        bottom: 5;
         left: 0;
         right: 0;
         text-align: center;
         font-size: 9px;
         font-weight: 600;
-        color: #888;
+        color: var(--slatedark);
         pointer-events: none;
     }
 
     .half.selected .half-label {
-        color: #eff6ff;
+        color: var(--green);
     }
 
     .summary {
@@ -267,13 +273,23 @@
         display: flex;
         flex-wrap: wrap;
         gap: 4px;
+
+        p {
+            color: var(--slatedark);
+            align-self: center;
+        }
     }
 
     .tag {
-        background: #eff6ff;
-        color: #1d4ed8;
-        font-size: 11px;
-        padding: 2px 8px;
-        border-radius: 6px;
+        background: var(--darkgreen);
+        color: white;
+        font-size: 14px;
+        padding: 8px 12px;
+        border-radius: var(--borderRadius);
+    }
+
+    #choose-salle {
+        color: var(--green);
+        font-size: 14px;
     }
 </style>

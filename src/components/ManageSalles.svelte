@@ -2,11 +2,25 @@
     import { onMount } from 'svelte';
     import SalleController from '../controllers/salle.controller';
     import type { Salle, SalleDto } from '../models/salle.entity';
+    import SallePopup from './SallePopup.svelte';
 
     const salleController = new SalleController();
 
     let salles: Salle[] = $state<Salle[]>([]);
     let errorMessage = $state<string>('');
+    let successMessage = $state<string>('');
+    let isVisible = $state<boolean>(false);
+
+    let mode = $state<'create' | 'update'>('create');
+    let salleDto = $state<SalleDto>({
+        name: '',
+        capacity: 30,
+        computers: 0,
+        teacherComputer: false,
+        aircool: false,
+    });
+    let id = $state<string>('');
+
 
     let name = $state<string>('');
     let capacity = $state<number>(30);
@@ -25,23 +39,14 @@
         refreshSalles();
     });
 
-    function addSalle(e: SubmitEvent) {
-        e.preventDefault();
+    function createSalle(salle: SalleDto) {
         errorMessage = '';
-        if (!name.trim()) {
+        if (!salle.name.trim()) {
             errorMessage = 'Le nom de la salle est requis.';
             return;
         }
 
-        const newSalle: SalleDto = {
-            name,
-            capacity,
-            computers,
-            teacherComputer,
-            aircool,
-        };
-
-        const response = salleController.save(newSalle);
+        const response = salleController.save(salle);
         if (response.success) {
             refreshSalles();
             name = '';
@@ -54,6 +59,18 @@
         }
     }
 
+    function addSalle(e: SubmitEvent) {
+        e.preventDefault();
+        const newSalle: SalleDto = {
+            name,
+            capacity,
+            computers,
+            teacherComputer,
+            aircool,
+        };
+        createSalle(newSalle);
+    }
+
     function removeSalle(id: string) {
         if (confirm('Voulez-vous vraiment supprimer cette salle ?')) {
             const response = salleController.remove(id);
@@ -64,179 +81,106 @@
             }
         }
     }
+
+    function updateSalle(id: string, salle: SalleDto) {
+        const response = salleController.update(id, salle);
+        if (response.success) {
+            successMessage = "Salle modifiée";
+            isVisible = false;
+            salleDto = {
+                name: '',
+                capacity: 30,
+                computers: 0,
+                teacherComputer: false,
+                aircool: false,
+            };
+            mode = "create";
+            id = "";
+            refreshSalles();
+        } else {
+            errorMessage = response.error.message;;
+        }
+    }
+
+    function openUpdatePopup(salles_ : Salle) {
+        salleDto = { ...salles_ };
+        mode = "update";
+        id = salles_.id;
+        isVisible = true;
+    }
+
+    function onSave() {
+        if (mode === 'create') {
+            createSalle(salleDto);
+        } else {
+            updateSalle(id, salleDto);
+        }
+    }
+
+    function openPopup() {
+        isVisible = true;
+    }
 </script>
 
 <div class="manage-salles">
-    <h2>Gestion des salles</h2>
+    <div>
+        <h2>Gestion des salles</h2>
+        {#if isVisible}
+            <SallePopup bind:salleDto bind:errorMessage bind:isVisible {mode} {onSave} />
+        {/if}
+        <p>{errorMessage ? errorMessage : null}</p>
+        {#if successMessage}
+            <div class="successMessage">{successMessage}</div>
+        {/if}
+        {#if errorMessage}
+            <div class="errorMessage">{errorMessage}</div>
+        {/if}
+        <button class="btn-add" onclick={openPopup}>Ajouter une salle</button>
+    </div>
 
-    {#if errorMessage}
-        <div class="errorMessage">{errorMessage}</div>
-    {/if}
-
-    <form onsubmit={addSalle} class="add-form">
-        <div class="form-group">
-            <label for="name">Nom de la salle</label>
-            <input type="text" id="name" bind:value={name} placeholder="Ex: Salle 101" required />
-        </div>
-
-        <div class="form-group">
-            <label for="capacity">Capacité (places)</label>
-            <input type="number" id="capacity" min="1" bind:value={capacity} required />
-        </div>
-
-        <div class="form-group">
-            <label for="computers">Nombre d'ordinateurs</label>
-            <input type="number" id="computers" min="0" bind:value={computers} />
-        </div>
-
-        <div class="form-group-checkbox">
-            <label>
-                <input type="checkbox" bind:checked={teacherComputer} />
-                Ordinateur prof
-            </label>
-        </div>
-
-        <div class="form-group-checkbox">
-            <label>
-                <input type="checkbox" bind:checked={aircool} />
-                Climatisation
-            </label>
-        </div>
-
-        <button type="submit" class="btn-add">Ajouter la salle</button>
-    </form>
-
-    <div class="salles-list">
-        <h3>Salles existantes ({salles.length})</h3>
-        {#if salles.length > 0}
-            <ul>
-                {#each salles as salle}
-                    <li>
-                        <div class="salle-info">
-                            <strong>{salle.name}</strong> - {salle.capacity} places
-                            <span class="details">
-                                ({salle.computers} pc{salle.teacherComputer
-                                    ? ', pc prof'
-                                    : ''}{salle.aircool ? ', clim' : ''})
-                            </span>
-                        </div>
-                        <button class="btn-delete" onclick={() => removeSalle(salle.id)}
-                            >Supprimer</button
-                        >
-                    </li>
-                {/each}
-            </ul>
+    <div>
+        {#if salles.length}
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Salle</th>
+                        <th scope="col">Capacité</th>
+                        <th scope="col">Ordinateurs</th>
+                        <th scope="col">PC Prof</th>
+                        <th scope="col">Climatisation</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {#each salles as salle}
+                        <tr>
+                            <td>{salle.name}</td>
+                            <td>{salle.capacity}</td>
+                            <td>{salle.computers}</td>
+                            <td>{salle.teacherComputer ? 'Oui' : 'Non'}</td>
+                            <td>{salle.aircool ? 'Oui' : 'Non'}</td>
+                            <td>
+                                <button class="btn-edit" onclick={() => openUpdatePopup(salle)}>Modifier</button>
+                                <button class="btn-delete" onclick={() => removeSalle(salle.id)}>Supprimer</button>
+                            </td>
+                        </tr>
+                    {/each}
+                </tbody>
+            </table>
         {:else}
             <p>Aucune salle enregistrée.</p>
         {/if}
     </div>
+
 </div>
 
 <style>
-    .manage-salles {
-        background-color: var(--slatedark, #1a1a1a);
-        padding: 24px;
-        border-radius: var(--borderRadius, 8px);
-        margin-bottom: 24px;
-        color: white;
-    }
 
-    h2,
-    h3 {
-        margin-top: 0;
-        margin-bottom: 16px;
-    }
-
-    .salles-list {
-        display: flex;
-        flex-direction: column;
-        gap: 0px;
-    }
-
-    .add-form {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        align-items: end;
-        border-bottom: 1px solid #333;
-    }
-
-    .form-group {
+    div:first-child {
         display: flex;
         flex-direction: column;
         gap: 8px;
+        padding: 20px 0;
     }
 
-    .form-group input {
-        padding: 8px;
-        border-radius: 4px;
-        border: 1px solid #444;
-        background: #2a2a2a;
-        color: white;
-    }
-
-    .form-group-checkbox {
-        display: flex;
-        align-items: center;
-        height: 35px;
-    }
-
-    .form-group-checkbox label {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        cursor: pointer;
-    }
-
-    .btn-add {
-        background: #4caf50;
-        color: white;
-        border: none;
-        padding: 10px 16px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-weight: bold;
-    }
-
-    .btn-add:hover {
-        background: #45a049;
-    }
-
-    .btn-delete {
-        background: #ff5252;
-        color: white;
-        border: none;
-        padding: 6px 12px;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-
-    .btn-delete:hover {
-        background: #f44336;
-    }
-
-    ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    li {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: #2a2a2a;
-        padding: 12px 16px;
-        margin: 0;
-        gap: 16px;
-        border-radius: 4px;
-    }
-
-    .details {
-        font-size: 0.85em;
-        color: #aaa;
-        margin-left: 8px;
-    }
 </style>

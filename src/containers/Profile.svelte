@@ -5,10 +5,10 @@
     import type { Reservation } from '../models/reservation.entity';
     import SalleController from '../controllers/salle.controller';
     import UserController from '../controllers/user.controller';
-
-    let userFirstName = $state<string>('');
-    let userLastName = $state<string>('');
-    let userReservations = $state<Reservation[]>([]); // Récupérer state
+    
+    let userFirstName = $state<string>("");
+    let userLastName = $state<string>("");
+    let userReservations = $state<Reservation[]>([]);
     const reservationController = new ReservationController();
 
     onMount(() => {
@@ -31,21 +31,17 @@
 
     function isCancellable(date: string): boolean {
         const today = new Date();
-        const [year, month, day] = date.split('-');
+        const [day, month, year] = date.split('-');
         const resDate = new Date(Number(year), Number(month) - 1, Number(day), 0, 0, 0);
         const diff = resDate.getTime() - today.getTime();
         return diff >= 86400000; // 24h : 86 400 000ms
     }
 
     function annulerReservation(reservation: Reservation) {
-        if (
-            confirm(
-                `Voulez-vous vraiment annuler votre réservation du ${reservation.date} pour la salle ${reservation.salleId} ?`
-            )
-        ) {
+        if(confirm(`Voulez-vous vraiment annuler votre réservation du ${reservation.date} pour la salle ${getSalleName(reservation.salleId)} ?`)) {
             const response = reservationController.remove(reservation.id);
-            if (response.success) {
-                userReservations = userReservations.filter((r) => r.id !== reservation.id); //Mettre a jour la liste des reservations
+            if(response.success) {
+                userReservations = userReservations.filter(r => r.id !== reservation.id);
             } else {
                 alert(response.error?.message || 'Erreur');
             }
@@ -68,7 +64,7 @@
     }
 </script>
 
-<h1>Profil de {userFirstName} {userLastName}</h1>
+<h1>Profil de {userFirstName} {userLastName}</h1> 
 
 <div>
     <h2>Mes réservations</h2>
@@ -119,11 +115,6 @@
         border-radius: var(--borderRadius);
         padding: 24px;
         width: 100%;
-    }
-
-    th,
-    td {
-        padding: 20px;
     }
 
     tbody tr {

@@ -28,8 +28,8 @@
             (salle: SalleWithReservations) =>
                 salle.capacity >= capacity &&
                 salle.computers >= computers &&
-                (!teacherComputer || (teacherComputer && salle.teacherComputer)) &&
-                (!airCool || (airCool && salle.aircool)) &&
+                (teacherComputer || !salle.teacherComputer) &&
+                (airCool || !salle.aircool) &&
                 !salle.reservations.some((r: Reservation) => r.date === selectedDate)
         )
     );
@@ -74,101 +74,109 @@
 
 <h1>Réserver une salle</h1>
 
-<section>
-    <h2>Filtres</h2>
-    <div>
-        <label for="capacity">Capacité</label>
-        <input type="number" id="capacity" bind:value={capacity} />
-
-        <label for="computers">Nombre d'ordinateurs</label>
-        <input type="number" id="computers" bind:value={computers} />
-
+<main>
+    <aside>
+        <h2>Date</h2>
         <fieldset>
-            <legend>Ordinateur professeur</legend>
-            {#each [true, false] as option}
-                <label>
-                    <input
-                        type="radio"
-                        name="teacherComputer"
-                        value={option}
-                        bind:group={teacherComputer}
-                    />
-                    {option ? 'Oui' : 'Non'}
-                </label>
-            {/each}
+            <DatePicker showSalleMessage={true} bind:selected={selectedDate} bind:disabled />
         </fieldset>
+    </aside>
+    
+    <section>
+        <div>
+            <h2>Filtres</h2>
+            <div class="filtres-container">
+                <label for="capacity">Capacité</label>
+                <input type="number" id="capacity" bind:value={capacity} />
+    
+                <label for="computers">Nombre d'ordinateurs</label>
+                <input type="number" id="computers" bind:value={computers} />
+    
+                <label for="teacherComputer">PC Prof</label>
+                <input type="checkbox" name="teacherComputer" bind:checked={teacherComputer} />
 
-        <fieldset>
-            <legend>Climatisation</legend>
-            {#each [true, false] as option}
-                <label>
-                    <input type="radio" name="airCool" value={option} bind:group={airCool} />
-                    {option ? 'Oui' : 'Non'}
-                </label>
-            {/each}
-        </fieldset>
-
-        <fieldset>
-            <legend>Date</legend>
-            <DatePicker bind:selected={selectedDate} bind:disabled />
-        </fieldset>
-    </div>
-</section>
-
-<div class="salles-container">
-    <h2>Salles disponibles</h2>
-    {#if displayed.length > 0}
-        <ul>
-            {#each displayed as salle}
-                <li>
-                    <span>
-                        <strong>{salle.name}</strong>
-                        ({salle.capacity} places)
-                        <span id="tag"
-                            >{salle.capacity >= 100
-                                ? 'Amphi'
-                                : salle.computers > 0
-                                  ? 'Informatique'
-                                  : 'Classique'}</span
-                        >
-                        {#if salle.aircool}
-                            <span id="tag">Clim</span>
-                        {/if}
-                    </span>
-                    <button type="button" onclick={() => reserver(salle)} title="Réserver la salle"
-                        >Réserver la salle</button
-                    >
-                </li>
-            {/each}
-        </ul>
-    {:else}
-        <p>Aucune salle correspondante aux critères de recherche n'est disponible.</p>
-    {/if}
-</div>
+                <label for="airCool">Climatisation</label>
+                <input type="checkbox" name="airCool" bind:checked={airCool} />
+            </div>
+        </div>
+    
+        <div class="salles-container">
+            <h3>Salles disponibles</h3>
+            {#if displayed.length > 0}
+                <ul>
+                    {#each displayed as salle}
+                        <li>
+                            <span>
+                                <strong>{salle.name}</strong>
+                                ({salle.capacity} places)
+                                <span id="tag">
+                                    {salle.capacity >= 100 ? 'Amphi' : salle.computers > 0 ?  "Informatique" : 'Classique'}
+                                </span>
+                                {#if salle.teacherComputer}
+                                        <span id="tag">PC Prof</span>
+                                {/if}
+                                {#if salle.computers > 0}
+                                        <span id="tag">{salle.computers} postes</span>
+                                {/if}
+                                {#if salle.aircool}
+                                    <span id="tag">Clim</span>
+                                {/if}
+                            </span>
+                            <button class="btn-add" type="button" onclick={() => reserver(salle)} title="Réserver la salle"
+                                >Réserver la salle</button
+                            >
+                        </li>
+                    {/each}
+                </ul>
+            {:else}
+                <p>Aucune salle correspondante aux critères de recherche n'est disponible.</p>
+            {/if}
+        </div>
+    </section>
+</main>
 
 <style>
-    .dashboard-contenu {
+
+    main {
         display: flex;
         gap: 16px;
-        margin: 20px 0;
     }
 
-    .dashboard-contenu button {
-        background-color: var(--softwhite);
-        color: var(--slatedark);
+    aside {
+        min-width: 30vw;
     }
 
-    .calendar {
-        padding: 24px;
+    section {
+        display: flex;
+        flex-direction: column;
+        flex: auto;
+        gap: 8px;
+    }
+
+    .filtres-container {
         background-color: var(--slatedark);
+        padding: 24px;
         border-radius: var(--borderRadius);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        input {
+            max-width: 64px;
+            height: 32px;
+        }
     }
 
     .salles-container {
-        width: 100%;
-        padding: 40px;
+        padding: 24px;
+        height: max-content; 
         background-color: var(--slatedark);
         border-radius: var(--borderRadius);
+
+        
+        h3 {
+            color: white;
+        }
     }
 
     .salles-container li {
@@ -178,44 +186,17 @@
         gap: 20px;
     }
 
-    .filters-bar {
-        background: var(--slatedark);
-        padding: 15px;
-        border-radius: var(--borderRadius);
-        display: flex;
-        gap: 20px;
-        margin-bottom: 20px;
-        align-items: center;
-        flex-wrap: wrap;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    }
-
-    .filter-group {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-weight: 500;
-        font-size: 0.95rem;
-    }
-
-    .filter-group input,
-    .filter-group select {
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
-
-    .filter-group input[type='checkbox'] {
-        width: 20px;
-        height: 20px;
-        vertical-align: middle;
-    }
-
     #tag {
         padding: 4px 8px;
         font-size: 12px;
         border-radius: 32px;
         background-color: var(--softwhite);
         color: var(--slatedark);
+    }
+
+    @media screen and (max-width: 769px) {
+        main {
+            display: grid;
+        }
     }
 </style>

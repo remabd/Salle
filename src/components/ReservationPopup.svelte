@@ -72,35 +72,58 @@
     function close() {
         isVisible = false;
     }
+
+    $effect(() => {
+        if(isVisible) {
+            window.scrollTo({top: 0, behavior: "smooth"});
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "";
+        }
+        return () => {
+            document.body.style.overflow = "";
+        }
+    })
 </script>
 
 <div class="modal">
-    <div class="row">
-        <h3>Ajouter une salle</h3>
-        <button onclick={close}>X</button>
+    <div class="modal-content">
+        <div class="row">
+            <h3>Ajouter une salle</h3>
+            <button onclick={close}>X</button>
+        </div>
+        {#if errorMessage}
+            <p>{errorMessage}</p>
+        {/if}
+        <form onsubmit={handleSubmit} class="add-form">
+            <div>
+                <span>Quel utilisateur réserve ?</span>
+                <select name="user" bind:value={reservationDto.userId}>
+                    {#each users as user}
+                        <option value={user.id}>{user.firstName + ' ' + user.lastName}</option>
+                    {/each}
+                </select>
+            </div>
+            <div>
+                <span>Pour quelle salle ?</span>
+                <select name="salle" bind:value={reservationDto.salleId}>
+                    {#each salles as salle}
+                        <option value={salle.id}>{salle.name}</option>
+                    {/each}
+                </select>
+            </div>
+            <DatePicker bind:selected={reservationDto.date} bind:disabled />
+            <button type="submit">{mode === 'create' ? 'Ajouter' : 'Modifier'} la réservation</button>
+        </form>
     </div>
-    {#if errorMessage}
-        <p>{errorMessage}</p>
-    {/if}
-    <form onsubmit={handleSubmit} class="add-form">
-        <div>
-            <select name="user" bind:value={reservationDto.userId}>
-                {#each users as user}
-                    <option value={user.id}>{user.firstName + ' ' + user.lastName}</option>
-                {/each}
-            </select>
-        </div>
-
-        <div>
-            <select name="salle" bind:value={reservationDto.salleId}>
-                {#each salles as salle}
-                    <option value={salle.id}>{salle.name}</option>
-                {/each}
-            </select>
-        </div>
-
-        <DatePicker bind:selected={reservationDto.date} bind:disabled />
-
-        <button type="submit">{mode === 'create' ? 'Ajouter' : 'Modifier'} la réservation</button>
-    </form>
 </div>
+
+<!-- <style>
+    select {
+        padding: 8px;
+        background-color: var(--grey);
+        color: var(--slatedark);
+        border-radius: var(--borderRadius);
+        border: none;
+    }
+</style> -->

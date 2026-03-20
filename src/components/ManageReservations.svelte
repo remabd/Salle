@@ -33,7 +33,7 @@
         }
     }
 
-    function CreateReservation(id: string) {
+    function cancelReservation(id: string) {
         const response = reservationController.remove(id);
         if (response.success) {
             errorMessage = 'Réservation supprimée';
@@ -126,15 +126,14 @@
 </script>
 
 <section>
-    <h2>Gestion des réservations</h2>
-
-    {#if isVisible}
-        <ReservationPopup bind:reservationDto bind:errorMessage bind:isVisible {mode} {onSave} />
-    {/if}
-
-    <p>{errorMessage ? errorMessage : null}</p>
-
-    <button onclick={openPopup}>Ajouter</button>
+    <div>
+        <h2>Gestion des réservations</h2>
+        {#if isVisible}
+            <ReservationPopup bind:reservationDto bind:errorMessage bind:isVisible {mode} {onSave} />
+        {/if}
+        <p class="errorMessage">{errorMessage ? errorMessage : null}</p>
+        <button class="btn-add" onclick={openPopup}>Ajouter une réservation</button>
+    </div>
 
     <div>
         {#if reservations.length}
@@ -154,8 +153,8 @@
                             <td>{findSalleById(res.salleId)}</td>
                             <td>{res.date}</td>
                             <td>
-                                <button onclick={() => openUpdatePopup(res)}>Modifier</button>
-                                <button onclick={() => CreateReservation(res.id)}>Supprimer</button>
+                                <button class="btn-edit" onclick={() => openUpdatePopup(res)}>Modifier</button>
+                                <button class="btn-delete" onclick={() => cancelReservation(res.id)}>Supprimer</button>
                             </td>
                         </tr>
                     {/each}
@@ -166,3 +165,12 @@
         {/if}
     </div>
 </section>
+
+<style>
+    div:first-child {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 20px 0;
+    }
+</style>
