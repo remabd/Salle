@@ -33,7 +33,7 @@
     <label for="password">Mot de passe</label>
     <input type="password" name="password" id="password" bind:value={password} />
 
-    <button type="submit">Se connecter</button>
+    <button type="submit" class="btn-add">Se connecter</button>
 </form>
 
 <style>
