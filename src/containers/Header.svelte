@@ -2,6 +2,7 @@
     import { onMount } from 'svelte';
     import AuthController from '../controllers/auth.controller';
     import { push } from 'svelte-spa-router';
+    import { authStore } from '../stores/auth.store';
 
     let isConnected = $state(false);
     let isAdmin = $state(false);
@@ -10,8 +11,7 @@
         const authController = new AuthController();
         const connexion = authController.getConnexion();
         if (connexion.success) {
-            isConnected = true;
-            isAdmin = connexion.data?.admin ? true : false;
+            authStore.set({ isConnected: true, isAdmin: connexion.data?.admin ?? false });
         }
     });
 
@@ -26,8 +26,8 @@
 
 <header>
     <ul>
-        {#if isConnected}
-            {#if !isAdmin}
+        {#if $authStore.isConnected}
+            {#if !$authStore.isAdmin}
                 <li><a class="profile-btn" href="#/salle">Réserver une salle</a></li>
             {:else}
                 <li><a class="profile-btn" href="#/dashboard">Tableau de bord</a></li>
