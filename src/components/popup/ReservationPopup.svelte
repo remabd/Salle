@@ -1,12 +1,12 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import SalleController from '../controllers/salle.controller';
-    import UserController from '../controllers/user.controller';
-    import type { Reservation, ReservationDto } from '../models/reservation.entity';
-    import type { Salle } from '../models/salle.entity';
-    import type { User } from '../models/user.entity';
-    import DatePicker from './DatePicker.svelte';
-    import ReservationController from '../controllers/reservation.controller';
+    import SalleController from '../../controllers/salle.controller';
+    import UserController from '../../controllers/user.controller';
+    import type { Reservation, ReservationDto } from '../../models/reservation.entity';
+    import type { Salle } from '../../models/salle.entity';
+    import type { User } from '../../models/user.entity';
+    import DatePicker from './../DatePicker.svelte';
+    import ReservationController from '../../controllers/reservation.controller';
 
     interface Props {
         reservationDto: ReservationDto;
@@ -74,16 +74,16 @@
     }
 
     $effect(() => {
-        if(isVisible) {
-            window.scrollTo({top: 0, behavior: "smooth"});
-            document.body.style.overflow = "hidden";
+        if (isVisible) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.body.style.overflow = 'hidden';
         } else {
-            document.body.style.overflow = "";
+            document.body.style.overflow = '';
         }
         return () => {
-            document.body.style.overflow = "";
-        }
-    })
+            document.body.style.overflow = '';
+        };
+    });
 </script>
 
 <div class="modal">
@@ -113,17 +113,14 @@
                 </select>
             </div>
             <DatePicker bind:selected={reservationDto.date} bind:disabled />
-            <button type="submit">{mode === 'create' ? 'Ajouter' : 'Modifier'} la réservation</button>
+            <button type="submit"
+                >{mode === 'create' ? 'Ajouter' : 'Modifier'} la réservation</button
+            >
         </form>
     </div>
 </div>
 
-<!-- <style>
-    select {
-        padding: 8px;
-        background-color: var(--grey);
-        color: var(--slatedark);
-        border-radius: var(--borderRadius);
-        border: none;
-    }
-</style> -->
+<style>
+    @import '../../style/modal.css';
+    @import '../../style/form.css';
+</style>
