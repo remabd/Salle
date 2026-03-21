@@ -28,8 +28,6 @@
 
     onMount(() => refreshReservations());
 
-    $inspect(reservations);
-
     function refreshReservations() {
         const response = reservationController.findCurrent();
         if (response.success) {
@@ -40,8 +38,6 @@
             reservations = sorted;
         }
     }
-
-    $inspect(reservations);
 
     function cancelReservation(id: string) {
         const response = reservationController.remove(id);
