@@ -18,14 +18,17 @@ export default class ReservationController {
         };
     }
 
-    findToday(): Response<Reservation[]> {
-        const now = new Date();
-        const today = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+    findCurrent(): Response<Reservation[]> {
         const reservations = this.reservationRepository.find();
-        reservations.filter((r: Reservation) => r.date.slice(0, r.date.lastIndexOf('-')) === today);
+        const today = new Date();
+        const todayAsString = `${today.getDate()}-${today.getMonth() + 1 > 9 ? today.getMonth() + 1 : '0' + (today.getMonth() + 1).toString()}-${today.getFullYear()}`;
+        console.log(todayAsString);
+        const result = reservations.filter(
+            (r: Reservation) => r.date.slice(0, r.date.lastIndexOf('-')) === todayAsString
+        );
         return {
             success: true,
-            data: reservations,
+            data: result,
         };
     }
 

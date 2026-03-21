@@ -1,4 +1,5 @@
 <script lang="ts">
+    import ManageCurrentReservations from '../components/ManageCurrentReservations.svelte';
     import ManageReservations from '../components/ManageReservations.svelte';
     import ManageSalles from '../components/ManageSalles.svelte';
     import ManageUsers from '../components/ManageUsers.svelte';
@@ -23,7 +24,8 @@
     <ManageUsers />
 {:else if visibility === 'reservation'}
     <ManageReservations />
+{:else if visibility === 'en cours'}
+    <ManageCurrentReservations />
 {:else}
     <p>Rien à afficher</p>
 {/if}
-
