@@ -1,3 +1,12 @@
 <script lang="ts"></script>
 
-<p id="footer-p">© Projet Svelte par Abdallah Remi & Nouhet Pierre.</p>
+<footer>
+    <p>© Projet Svelte par Abdallah Remi & Nouhet Pierre.</p>
+</footer>
+
+<style>
+    p {
+        margin-top: 20px;
+        color: var(--slatedark);
+    }
+</style>

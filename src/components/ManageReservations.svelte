@@ -5,7 +5,7 @@
     import ReservationController from '../controllers/reservation.controller';
     import type { ReservationDto, Reservation } from '../models/reservation.entity';
     import SalleController from '../controllers/salle.controller';
-    import ReservationPopup from './ReservationPopup.svelte';
+    import ReservationPopup from './popup/ReservationPopup.svelte';
 
     const reservationController = new ReservationController();
     const salleController = new SalleController();
@@ -129,7 +129,13 @@
     <div>
         <h2>Gestion des réservations</h2>
         {#if isVisible}
-            <ReservationPopup bind:reservationDto bind:errorMessage bind:isVisible {mode} {onSave} />
+            <ReservationPopup
+                bind:reservationDto
+                bind:errorMessage
+                bind:isVisible
+                {mode}
+                {onSave}
+            />
         {/if}
         <p class="errorMessage">{errorMessage ? errorMessage : null}</p>
         <button class="btn-add" onclick={openPopup}>Ajouter une réservation</button>
@@ -153,8 +159,12 @@
                             <td>{findSalleById(res.salleId)}</td>
                             <td>{res.date}</td>
                             <td>
-                                <button class="btn-edit" onclick={() => openUpdatePopup(res)}>Modifier</button>
-                                <button class="btn-delete" onclick={() => cancelReservation(res.id)}>Supprimer</button>
+                                <button class="btn-edit" onclick={() => openUpdatePopup(res)}
+                                    >Modifier</button
+                                >
+                                <button class="btn-delete" onclick={() => cancelReservation(res.id)}
+                                    >Supprimer</button
+                                >
                             </td>
                         </tr>
                     {/each}
@@ -167,6 +177,8 @@
 </section>
 
 <style>
+    @import '../style/table.css';
+
     div:first-child {
         display: flex;
         flex-direction: column;

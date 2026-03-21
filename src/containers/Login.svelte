@@ -33,3 +33,7 @@
 
     <button type="submit">Se connecter</button>
 </form>
+
+<style>
+    @import '../style/form.css';
+</style>

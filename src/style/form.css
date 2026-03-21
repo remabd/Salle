@@ -1,0 +1,15 @@
+form {
+    display: grid;
+    background-color: var(--softwhite);
+    padding: 24px;
+    border-radius: 8px;
+    color: black;
+    gap: 8px;
+    text-align: start;
+    margin: 20px 0;
+}
+
+form input {
+    padding: 8px;
+    border-radius: 4px;
+}

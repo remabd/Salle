@@ -28,9 +28,9 @@
     <ul>
         {#if isConnected}
             {#if !isAdmin}
-                <li><a href="#/salle">Réserver une salle</a></li>
+                <li><a class="profile-btn" href="#/salle">Réserver une salle</a></li>
             {:else}
-                <li><a href="#/dashboard">Tableau de bord</a></li>
+                <li><a class="profile-btn" href="#/dashboard">Tableau de bord</a></li>
             {/if}
             <div>
                 <a class="profile-btn" href="#/profile">Profil</a>
@@ -41,3 +41,37 @@
         {/if}
     </ul>
 </header>
+
+<style>
+    header {
+        width: 100%;
+    }
+
+    ul {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        list-style: none;
+    }
+
+    button,
+    .profile-btn {
+        border-radius: 8px;
+        border: 1px solid transparent;
+        padding: 0.6em 1.2em;
+        font-size: 1em;
+        font-weight: 500;
+        font-family: inherit;
+        background-color: var(--slatedark);
+        cursor: pointer;
+        transition: border-color 0.25s;
+    }
+
+    button:hover,
+    .profile-btn:hover {
+        opacity: 0.75;
+        transition: all 0.2s ease;
+    }
+</style>

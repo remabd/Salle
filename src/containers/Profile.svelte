@@ -5,9 +5,9 @@
     import type { Reservation } from '../models/reservation.entity';
     import SalleController from '../controllers/salle.controller';
     import UserController from '../controllers/user.controller';
-    
-    let userFirstName = $state<string>("");
-    let userLastName = $state<string>("");
+
+    let userFirstName = $state<string>('');
+    let userLastName = $state<string>('');
     let userReservations = $state<Reservation[]>([]);
     const reservationController = new ReservationController();
 
@@ -38,10 +38,14 @@
     }
 
     function annulerReservation(reservation: Reservation) {
-        if(confirm(`Voulez-vous vraiment annuler votre réservation du ${reservation.date} pour la salle ${getSalleName(reservation.salleId)} ?`)) {
+        if (
+            confirm(
+                `Voulez-vous vraiment annuler votre réservation du ${reservation.date} pour la salle ${getSalleName(reservation.salleId)} ?`
+            )
+        ) {
             const response = reservationController.remove(reservation.id);
-            if(response.success) {
-                userReservations = userReservations.filter(r => r.id !== reservation.id);
+            if (response.success) {
+                userReservations = userReservations.filter((r) => r.id !== reservation.id);
             } else {
                 alert(response.error?.message || 'Erreur');
             }
@@ -64,7 +68,7 @@
     }
 </script>
 
-<h1>Profil de {userFirstName} {userLastName}</h1> 
+<h1>Profil de {userFirstName} {userLastName}</h1>
 
 <div>
     <h2>Mes réservations</h2>
@@ -88,6 +92,7 @@
                         <td>{getSalleCreneau(reservation.date)}</td>
                         <td>
                             <button
+                                class="btn-delete"
                                 type="button"
                                 onclick={() => annulerReservation(reservation)}
                                 disabled={!isCancellable(reservation.date)}
@@ -104,26 +109,7 @@
 </div>
 
 <style>
-    h2 {
-        font-size: 2rem;
-        padding: 20px;
-    }
-
-    table {
-        border-collapse: collapse;
-        background-color: var(--slatedark);
-        border-radius: var(--borderRadius);
-        padding: 24px;
-        width: 100%;
-    }
-
-    tbody tr {
-        border-top: 2px solid var(--bgColor);
-    }
-
-    button {
-        background-color: var(--red);
-    }
+    @import '../style/table.css';
 
     button:disabled {
         background-color: #5f5f5f;

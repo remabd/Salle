@@ -11,3 +11,9 @@
     <Router {routes} />
 </main>
 <Footer />
+
+<style>
+    main {
+        width: 80%;
+    }
+</style>
