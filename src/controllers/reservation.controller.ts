@@ -2,12 +2,15 @@ import type { ReservationDto, Reservation } from '../models/reservation.entity';
 import ReservationRepository from '../repository/reservation.repository';
 import type { Response } from '../models/response.entity';
 import { v4 as uuid } from 'uuid';
+import { DateUtils } from '../utils/date.utils';
 
 export default class ReservationController {
     private reservationRepository: ReservationRepository;
+    private dateUtils: DateUtils;
 
     constructor() {
         this.reservationRepository = new ReservationRepository();
+        this.dateUtils = new DateUtils();
     }
 
     find(): Response<Reservation[]> {
@@ -21,8 +24,7 @@ export default class ReservationController {
     findCurrent(): Response<Reservation[]> {
         const reservations = this.reservationRepository.find();
         const today = new Date();
-        const todayAsString = `${today.getDate()}-${today.getMonth() + 1 > 9 ? today.getMonth() + 1 : '0' + (today.getMonth() + 1).toString()}-${today.getFullYear()}`;
-        console.log(todayAsString);
+        const todayAsString = this.dateUtils.stringifyDate(today);
         const result = reservations.filter(
             (r: Reservation) => r.date.slice(0, r.date.lastIndexOf('-')) === todayAsString
         );

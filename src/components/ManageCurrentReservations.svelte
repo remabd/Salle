@@ -6,11 +6,13 @@
     import type { ReservationDto, Reservation } from '../models/reservation.entity';
     import SalleController from '../controllers/salle.controller';
     import ReservationPopup from './popup/ReservationPopup.svelte';
+    import { DateUtils } from '../utils/date.utils';
 
     const reservationController = new ReservationController();
     const salleController = new SalleController();
     const userController = new UserController();
     const validationGuard = new ValidationGuard();
+    const dateUtils = new DateUtils();
 
     let reservations = $state<Reservation[]>([]);
     let errorMessage = $state<string>('');
@@ -31,9 +33,15 @@
     function refreshReservations() {
         const response = reservationController.findCurrent();
         if (response.success) {
-            reservations = response.data;
+            const sorted = response.data.sort(
+                (a, b) =>
+                    dateUtils.parseDate(a.date).getTime() - dateUtils.parseDate(b.date).getTime()
+            );
+            reservations = sorted;
         }
     }
+
+    $inspect(reservations);
 
     function cancelReservation(id: string) {
         const response = reservationController.remove(id);

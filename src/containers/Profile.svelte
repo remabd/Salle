@@ -5,11 +5,13 @@
     import type { Reservation } from '../models/reservation.entity';
     import SalleController from '../controllers/salle.controller';
     import UserController from '../controllers/user.controller';
+    import { DateUtils } from '../utils/date.utils';
 
     let userFirstName = $state<string>('');
     let userLastName = $state<string>('');
     let userReservations = $state<Reservation[]>([]);
     const reservationController = new ReservationController();
+    const dateUtils = new DateUtils();
 
     onMount(() => {
         const authController = new AuthController();
@@ -24,7 +26,12 @@
             }
             const resData = reservationController.findByUserId(response.data.id);
             if (resData.success) {
-                userReservations = resData.data;
+                const sorted = resData.data.sort(
+                    (a, b) =>
+                        dateUtils.parseDate(a.date).getTime() -
+                        dateUtils.parseDate(b.date).getTime()
+                );
+                userReservations = sorted;
             }
         }
     });
