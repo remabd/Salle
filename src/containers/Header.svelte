@@ -4,9 +4,6 @@
     import { push } from 'svelte-spa-router';
     import { authStore } from '../stores/auth.store';
 
-    let isConnected = $state(false);
-    let isAdmin = $state(false);
-
     onMount(() => {
         const authController = new AuthController();
         const connexion = authController.getConnexion();
@@ -17,8 +14,7 @@
 
     function disconnect() {
         const authController = new AuthController();
-        isConnected = false;
-        isAdmin = false;
+        authStore.set({ isConnected: false, isAdmin: false });
         authController.logout();
         push('#/');
     }
@@ -37,7 +33,7 @@
                 <button onclick={disconnect}>Déconnexion</button>
             </div>
         {:else}
-            <a href="#/">Connexion</a>
+            <a href="#/" class="profile-btn">Connexion</a>
         {/if}
     </ul>
 </header>
