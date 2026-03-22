@@ -5,8 +5,8 @@ Ce repository est une application web destinée à proposer un service de rése
 ## Fonctionnalité
 
 La page d'accueil est une page de connexion. Un utilisateur normal peut accéder aux pages `Profil`
-et `Réservation`. Un utilisateur administrateur peut accéder au `Dashboard`, lui donnant au crud
-complet sur les entitées de l'application.
+et `Réservation`. Un utilisateur administrateur peut accéder au `Dashboard`, lui donnant accès au
+crud complet sur les entitées de l'application.
 
 ## Installation
 
