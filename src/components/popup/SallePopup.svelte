@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { SalleDto } from '../models/salle.entity';
+    import type { SalleDto } from '../../models/salle.entity';
 
     interface Props {
         salleDto: SalleDto;
@@ -33,16 +33,16 @@
     }
 
     $effect(() => {
-        if(isVisible) {
-            window.scrollTo({top: 0, behavior: "smooth"});
-            document.body.style.overflow = "hidden";
+        if (isVisible) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.body.style.overflow = 'hidden';
         } else {
-            document.body.style.overflow = "";
+            document.body.style.overflow = '';
         }
         return () => {
-            document.body.style.overflow = "";
-        }
-    })
+            document.body.style.overflow = '';
+        };
+    });
 </script>
 
 <div class="modal">
@@ -70,50 +70,55 @@
             <div>
                 <fieldset>
                     <legend>Ordinateur Prof</legend>
-                        <label>
-                            <input
-                                type="radio"
-                                name="teacherComputer"
-                                value={true}
-                                bind:group={salleDto.teacherComputer}
-                            />
-                            Oui
-                        </label>
-                        <label>
-                            <input
-                                type="radio"
-                                name="teacherComputer"
-                                value={false}
-                                bind:group={salleDto.teacherComputer}
-                            />
-                            Non
-                        </label>
+                    <label>
+                        <input
+                            type="radio"
+                            name="teacherComputer"
+                            value={true}
+                            bind:group={salleDto.teacherComputer}
+                        />
+                        Oui
+                    </label>
+                    <label>
+                        <input
+                            type="radio"
+                            name="teacherComputer"
+                            value={false}
+                            bind:group={salleDto.teacherComputer}
+                        />
+                        Non
+                    </label>
                 </fieldset>
             </div>
             <div>
                 <fieldset>
                     <legend>Air climatisé</legend>
-                        <label>
-                            <input
-                                type="radio"
-                                name="aircool"
-                                value={true}
-                                bind:group={salleDto.aircool}
-                            />
-                            Oui
-                        </label>
-                        <label>
-                            <input
-                                type="radio"
-                                name="aircool"
-                                value={false}
-                                bind:group={salleDto.aircool}
-                            />
-                            Non
-                        </label>
+                    <label>
+                        <input
+                            type="radio"
+                            name="aircool"
+                            value={true}
+                            bind:group={salleDto.aircool}
+                        />
+                        Oui
+                    </label>
+                    <label>
+                        <input
+                            type="radio"
+                            name="aircool"
+                            value={false}
+                            bind:group={salleDto.aircool}
+                        />
+                        Non
+                    </label>
                 </fieldset>
             </div>
             <button type="submit">{mode === 'create' ? 'Ajouter' : 'Modifier'} la salle</button>
         </form>
     </div>
 </div>
+
+<style>
+    @import '../../style/modal.css';
+    @import '../../style/form.css';
+</style>

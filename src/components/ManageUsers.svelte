@@ -2,7 +2,7 @@
     import { onMount } from 'svelte';
     import UserController from '../controllers/user.controller';
     import type { User, UserDto } from '../models/user.entity';
-    import UserPopup from './UserPopup.svelte';
+    import UserPopup from './popup/UserPopup.svelte';
     import ValidationGuard from '../guards/validation.guard';
 
     const userController = new UserController();
@@ -138,8 +138,12 @@
                             <td>{user.email}</td>
                             <td>{user.admin ? 'OUI' : 'NON'}</td>
                             <td>
-                                <button class="btn-edit" onclick={() => openUpdatePopup(user)}>Modifier</button>
-                                <button class="btn-delete" onclick={() => deleteUser(user.id)}>Supprimer</button>
+                                <button class="btn-edit" onclick={() => openUpdatePopup(user)}
+                                    >Modifier</button
+                                >
+                                <button class="btn-delete" onclick={() => deleteUser(user.id)}
+                                    >Supprimer</button
+                                >
                             </td>
                         </tr>
                     {/each}
@@ -152,6 +156,8 @@
 </section>
 
 <style>
+    @import '../style/table.css';
+
     div:first-child {
         display: flex;
         flex-direction: column;

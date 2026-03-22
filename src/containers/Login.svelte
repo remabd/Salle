@@ -1,6 +1,7 @@
 <script lang="ts">
     import AuthController from '../controllers/auth.controller';
     import { push } from 'svelte-spa-router';
+    import { authStore } from '../stores/auth.store';
 
     let email = $state('');
     let password = $state('');
@@ -13,6 +14,7 @@
         if (!response.success) {
             errorMessage = response.error.message;
         } else {
+            authStore.set({ isConnected: true, isAdmin: response.data.admin === true });
             if (response.data.admin === true) {
                 push('#/dashboard');
             } else {
@@ -31,5 +33,9 @@
     <label for="password">Mot de passe</label>
     <input type="password" name="password" id="password" bind:value={password} />
 
-    <button type="submit">Se connecter</button>
+    <button type="submit" class="btn-add">Se connecter</button>
 </form>
+
+<style>
+    @import '../style/form.css';
+</style>

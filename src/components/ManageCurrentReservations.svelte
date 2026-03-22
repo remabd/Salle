@@ -29,7 +29,7 @@
     onMount(() => refreshReservations());
 
     function refreshReservations() {
-        const response = reservationController.find();
+        const response = reservationController.findCurrent();
         if (response.success) {
             const sorted = response.data.sort(
                 (a, b) =>
@@ -133,7 +133,7 @@
 
 <section>
     <div>
-        <h2>Gestion des réservations</h2>
+        <h2>Gestion des réservations d'aujourd'hui</h2>
         {#if isVisible}
             <ReservationPopup
                 bind:reservationDto

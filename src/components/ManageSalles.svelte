@@ -2,7 +2,7 @@
     import { onMount } from 'svelte';
     import SalleController from '../controllers/salle.controller';
     import type { Salle, SalleDto } from '../models/salle.entity';
-    import SallePopup from './SallePopup.svelte';
+    import SallePopup from './popup/SallePopup.svelte';
 
     const salleController = new SalleController();
 
@@ -20,7 +20,6 @@
         aircool: false,
     });
     let id = $state<string>('');
-
 
     let name = $state<string>('');
     let capacity = $state<number>(30);
@@ -85,7 +84,7 @@
     function updateSalle(id: string, salle: SalleDto) {
         const response = salleController.update(id, salle);
         if (response.success) {
-            successMessage = "Salle modifiée";
+            successMessage = 'Salle modifiée';
             isVisible = false;
             salleDto = {
                 name: '',
@@ -94,17 +93,17 @@
                 teacherComputer: false,
                 aircool: false,
             };
-            mode = "create";
-            id = "";
+            mode = 'create';
+            id = '';
             refreshSalles();
         } else {
-            errorMessage = response.error.message;;
+            errorMessage = response.error.message;
         }
     }
 
-    function openUpdatePopup(salles_ : Salle) {
+    function openUpdatePopup(salles_: Salle) {
         salleDto = { ...salles_ };
-        mode = "update";
+        mode = 'update';
         id = salles_.id;
         isVisible = true;
     }
@@ -160,8 +159,12 @@
                             <td>{salle.teacherComputer ? 'Oui' : 'Non'}</td>
                             <td>{salle.aircool ? 'Oui' : 'Non'}</td>
                             <td>
-                                <button class="btn-edit" onclick={() => openUpdatePopup(salle)}>Modifier</button>
-                                <button class="btn-delete" onclick={() => removeSalle(salle.id)}>Supprimer</button>
+                                <button class="btn-edit" onclick={() => openUpdatePopup(salle)}
+                                    >Modifier</button
+                                >
+                                <button class="btn-delete" onclick={() => removeSalle(salle.id)}
+                                    >Supprimer</button
+                                >
                             </td>
                         </tr>
                     {/each}
@@ -171,10 +174,10 @@
             <p>Aucune salle enregistrée.</p>
         {/if}
     </div>
-
 </div>
 
 <style>
+    @import '../style/table.css';
 
     div:first-child {
         display: flex;
@@ -182,5 +185,4 @@
         gap: 8px;
         padding: 20px 0;
     }
-
 </style>

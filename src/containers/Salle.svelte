@@ -20,16 +20,15 @@
     let teacherComputer = $state<boolean>(false);
     let airCool = $state<boolean>(false);
     let selectedDate = $state<string | null>();
-    let disabled = $state<string[]>([]);
-    let userId = $state<string>('');
+    let disabled = $state([]);
 
     let displayed = $derived(
         salles.filter(
             (salle: SalleWithReservations) =>
                 salle.capacity >= capacity &&
                 salle.computers >= computers &&
-                (teacherComputer || !salle.teacherComputer) &&
-                (airCool || !salle.aircool) &&
+                (!teacherComputer || (teacherComputer && salle.teacherComputer)) &&
+                (!airCool || (airCool && salle.aircool)) &&
                 !salle.reservations.some((r: Reservation) => r.date === selectedDate)
         )
     );
@@ -49,19 +48,14 @@
                 });
             }
         });
-        const connexionResponse = authController.getConnexion();
-        if (connexionResponse.success) {
-            userId = connexionResponse.data.id;
-        }
-        const res_ = reservationController.findByUserId(userId);
-        if (res_.success) {
-            res_.data.forEach((r: Reservation) => {
-                disabled.push(r.date);
-            });
-        }
     });
 
     function reserver(s: SalleWithReservations) {
+        const resAuth = authController.getConnexion();
+        let userId = '';
+        if (resAuth.success) {
+            userId = resAuth.data.id;
+        }
         if (selectedDate && userId) {
             reservationController.save({
                 date: selectedDate,
@@ -81,17 +75,17 @@
             <DatePicker showSalleMessage={true} bind:selected={selectedDate} bind:disabled />
         </fieldset>
     </aside>
-    
+
     <section>
         <div>
             <h2>Filtres</h2>
             <div class="filtres-container">
                 <label for="capacity">Capacité</label>
                 <input type="number" id="capacity" bind:value={capacity} />
-    
+
                 <label for="computers">Nombre d'ordinateurs</label>
                 <input type="number" id="computers" bind:value={computers} />
-    
+
                 <label for="teacherComputer">PC Prof</label>
                 <input type="checkbox" name="teacherComputer" bind:checked={teacherComputer} />
 
@@ -99,7 +93,7 @@
                 <input type="checkbox" name="airCool" bind:checked={airCool} />
             </div>
         </div>
-    
+
         <div class="salles-container">
             <h3>Salles disponibles</h3>
             {#if displayed.length > 0}
@@ -110,20 +104,27 @@
                                 <strong>{salle.name}</strong>
                                 ({salle.capacity} places)
                                 <span id="tag">
-                                    {salle.capacity >= 100 ? 'Amphi' : salle.computers > 0 ?  "Informatique" : 'Classique'}
+                                    {salle.capacity >= 100
+                                        ? 'Amphi'
+                                        : salle.computers > 0
+                                          ? 'Informatique'
+                                          : 'Classique'}
                                 </span>
                                 {#if salle.teacherComputer}
-                                        <span id="tag">PC Prof</span>
+                                    <span id="tag">PC Prof</span>
                                 {/if}
                                 {#if salle.computers > 0}
-                                        <span id="tag">{salle.computers} postes</span>
+                                    <span id="tag">{salle.computers} postes</span>
                                 {/if}
                                 {#if salle.aircool}
                                     <span id="tag">Clim</span>
                                 {/if}
                             </span>
-                            <button class="btn-add" type="button" onclick={() => reserver(salle)} title="Réserver la salle"
-                                >Réserver la salle</button
+                            <button
+                                class="btn-add"
+                                type="button"
+                                onclick={() => reserver(salle)}
+                                title="Réserver la salle">Réserver la salle</button
                             >
                         </li>
                     {/each}
@@ -136,7 +137,6 @@
 </main>
 
 <style>
-
     main {
         display: flex;
         gap: 16px;
@@ -169,11 +169,10 @@
 
     .salles-container {
         padding: 24px;
-        height: max-content; 
+        height: max-content;
         background-color: var(--slatedark);
         border-radius: var(--borderRadius);
 
-        
         h3 {
             color: white;
         }
