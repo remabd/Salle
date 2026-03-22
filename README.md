@@ -13,6 +13,7 @@ crud complet sur les entitées de l'application.
 ```
 git clone https://github.com/remabd/Salle.git
 cd Salle
+npm i
 npm run dev
 ```
 
