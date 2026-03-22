@@ -24,18 +24,32 @@
     }
 </script>
 
-<h1>Connexion</h1>
-<p class="errorMessage">{errorMessage}</p>
-<form {onsubmit}>
-    <label for="email">Email</label>
-    <input type="email" name="email" id="email" bind:value={email} />
-
-    <label for="password">Mot de passe</label>
-    <input type="password" name="password" id="password" bind:value={password} />
-
-    <button type="submit" class="btn-add">Se connecter</button>
-</form>
+<div>
+    <h1>Connexion</h1>
+    <p class="errorMessage">{errorMessage}</p>
+    <form {onsubmit}>
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" bind:value={email} />
+    
+        <label for="password">Mot de passe</label>
+        <input type="password" name="password" id="password" bind:value={password} />
+    
+        <button type="submit" class="btn-add">Se connecter</button>
+    </form>
+</div>
 
 <style>
     @import '../style/form.css';
+
+    div {
+        width: 40%;
+        margin: auto;
+    }
+
+    @media screen and (max-width: 768px) {
+        div {
+            width: auto;
+            margin: 0;
+        }
+    }
 </style>
