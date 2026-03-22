@@ -21,6 +21,7 @@
     let airCool = $state<boolean>(false);
     let selectedDate = $state<string | null>();
     let disabled = $state([]);
+    let errorMessage = $state<string>('');
 
     let displayed = $derived(
         salles.filter(
@@ -34,7 +35,12 @@
     );
 
     onMount(() => {
+        refreshSalles();
+    });
+
+    function refreshSalles() {
         let _salles: Salle[] = [];
+        let tmpResult: SalleWithReservations[] = [];
         const res = salleController.find();
         if (res.success) {
             _salles = res.data;
@@ -42,13 +48,14 @@
         _salles.forEach((s: Salle) => {
             const _res = reservationController.findBySalleId(s.id);
             if (_res.success) {
-                salles.push({
+                tmpResult.push({
                     ...s,
                     reservations: _res.data,
                 });
             }
         });
-    });
+        salles = tmpResult;
+    }
 
     function reserver(s: SalleWithReservations) {
         const resAuth = authController.getConnexion();
@@ -63,10 +70,13 @@
                 salleId: s.id,
             });
         }
+        refreshSalles();
+        errorMessage = `Salle ${s.name} réservée le ${selectedDate}.`;
     }
 </script>
 
 <h1>Réserver une salle</h1>
+<p class="errorMessage">{errorMessage}</p>
 
 <main>
     <aside>
